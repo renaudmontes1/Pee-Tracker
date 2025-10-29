@@ -150,8 +150,10 @@ class HealthInsightsEngine {
         let weekStart = calendar.date(byAdding: .day, value: -7, to: now)!
         
         let nighttimeCount = sessions.filter { session in
-            guard let endTime = session.endTime, endTime >= weekStart else { return false }
-            let hour = calendar.component(.hour, from: session.startTime)
+            guard let endTime = session.endTime, 
+                  let startTime = session.startTime,
+                  endTime >= weekStart else { return false }
+            let hour = calendar.component(.hour, from: startTime)
             return hour >= 22 || hour < 6
         }.count
         

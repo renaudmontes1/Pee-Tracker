@@ -24,6 +24,7 @@ class SessionStore: ObservableObject {
         // Create session with CURRENT device time
         let session = PeeSession()
         print("🔵 Session started at: \(session.startTime)")
+        SyncMonitor.shared.logEvent("Session started on Watch", type: .info)
         
         // Insert into local context FIRST
         modelContext.insert(session)
@@ -31,26 +32,30 @@ class SessionStore: ObservableObject {
         
         // Save to local database immediately (CloudKit sync happens in background)
         do {
+            SyncMonitor.shared.reportSyncStarted()
             try modelContext.save()
             print("✅ Session saved to LOCAL database (CloudKit will sync in background)")
+            SyncMonitor.shared.reportSyncSuccess()
+            SyncMonitor.shared.logEvent("Session saved locally on Watch", type: .success)
         } catch {
             print("❌ Failed to save session locally: \(error)")
+            SyncMonitor.shared.reportSyncError("Save failed: \(error.localizedDescription)")
         }
     }
     
-    func endSession(feeling: SessionFeeling, symptoms: [Symptom] = [], notes: String = "") {
+    func endSession(feeling: SessionFeeling, symptoms: [Symptom] = []) {
         guard let session = currentSession else { 
             print("⚠️ No current session to end")
             return 
         }
         
-        print("🔵 Ending session: \(session.id)")
+        print("🔵 Completing session: \(session.id)")
+        SyncMonitor.shared.logEvent("Completing session on Watch", type: .info)
         
-        // Update session properties with LOCAL device time
-        session.endSession()  // Sets endTime to Date() - current device time
+        // Session's endTime and duration were already set when user pressed Stop button
+        // Just update the feeling and symptoms
         session.feeling = feeling
         session.symptoms = symptoms
-        session.notes = notes
         
         print("⏱️  Start: \(session.startTime)")
         print("⏱️  End: \(session.endTime!)")
@@ -58,10 +63,14 @@ class SessionStore: ObservableObject {
         
         // Save to LOCAL database IMMEDIATELY (CloudKit syncs in background)
         do {
+            SyncMonitor.shared.reportSyncStarted()
             try modelContext.save()
             print("✅ Session saved to LOCAL database (CloudKit will sync in background)")
+            SyncMonitor.shared.reportSyncSuccess()
+            SyncMonitor.shared.logEvent("Session completed and saved on Watch (Duration: \(Int(session.duration ?? 0))s)", type: .success)
         } catch {
             print("❌ Failed to save session: \(error)")
+            SyncMonitor.shared.reportSyncError("Failed to save session: \(error.localizedDescription)")
         }
         
         // Clear current session
@@ -84,7 +93,11 @@ class SessionStore: ObservableObject {
         
         if let startDate = startDate, let endDate = endDate {
             descriptor.predicate = #Predicate<PeeSession> { session in
-                session.startTime >= startDate && session.startTime <= endDate
+                if let sessionStart = session.startTime {
+                    sessionStart >= startDate && sessionStart <= endDate
+                } else {
+                    false
+                }
             }
         }
         

@@ -16,27 +16,40 @@ struct Pee_TrackerApp: App {
         do {
             let schema = Schema([PeeSession.self])
             
-            // Configure local-first storage with CloudKit sync
+            // Configure CloudKit sync with explicit container identifier
+            // This MUST match the container in both entitlements files
             let modelConfiguration = ModelConfiguration(
                 schema: schema,
-                isStoredInMemoryOnly: false,  // Store on device (local SQLite)
-                cloudKitDatabase: .automatic  // Sync to CloudKit when available
+                isStoredInMemoryOnly: false,
+                cloudKitDatabase: .private("iCloud.rens-corp.Pee-Pee-Tracker")
             )
-            
-            // This configuration ensures:
-            // 1. All data is FIRST saved to local SQLite database
-            // 2. CloudKit sync happens in background (non-blocking)
-            // 3. Start/stop times are captured locally with device time
-            // 4. Works offline - syncs when network available
             
             modelContainer = try ModelContainer(
                 for: schema,
                 configurations: [modelConfiguration]
             )
             
-            print("✅ ModelContainer initialized with local-first storage")
+            print("✅ iPhone: ModelContainer initialized with CloudKit sync")
+            print("📦 Container: iCloud.rens-corp.Pee-Pee-Tracker")
         } catch {
-            fatalError("Could not initialize ModelContainer: \(error)")
+            print("❌ Failed to initialize ModelContainer: \(error)")
+            print("⚠️ If you see CloudKit errors, make sure:")
+            print("   1. iCloud capability is enabled in Xcode")
+            print("   2. You're signed in with an Apple ID")
+            print("   3. The container exists in CloudKit Dashboard")
+            
+            // Fallback to local-only storage
+            let schema = Schema([PeeSession.self])
+            let fallbackConfig = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false
+            )
+            do {
+                modelContainer = try ModelContainer(for: schema, configurations: [fallbackConfig])
+                print("⚠️ Using local storage only (no sync)")
+            } catch {
+                fatalError("Could not initialize ModelContainer: \(error)")
+            }
         }
     }
     

@@ -11,6 +11,7 @@ import Charts
 
 struct InsightsView: View {
     let sessions: [PeeSession]
+    @StateObject private var syncMonitor = SyncMonitor.shared
     @State private var selectedTab: InsightsTab = .charts
     @State private var selectedTimeframe: ChartTimeframe = .week
     
@@ -60,7 +61,7 @@ struct InsightsView: View {
                         .padding(.horizontal)
                     
                     // Symptom Frequency
-                    if sessions.contains(where: { !$0.symptoms.isEmpty }) {
+                    if sessions.contains(where: { !($0.symptoms ?? []).isEmpty }) {
                         SymptomFrequencyCard(sessions: sessions, timeframe: selectedTimeframe)
                             .padding(.horizontal)
                     }
@@ -75,6 +76,11 @@ struct InsightsView: View {
                 }
             }
             .navigationTitle("Insights")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SyncIndicator(monitor: syncMonitor)
+                }
+            }
         }
     }
 }
@@ -215,8 +221,9 @@ struct FrequencyChartCard: View {
             }
             
             filteredSessions.forEach { session in
-                let hour = calendar.component(.hour, from: session.startTime)
-                if let hourStart = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: session.startTime) {
+                guard let startTime = session.startTime else { return }
+                let hour = calendar.component(.hour, from: startTime)
+                if let hourStart = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: startTime) {
                     groupedSessions[hourStart, default: 0] += 1
                 }
             }
@@ -231,7 +238,8 @@ struct FrequencyChartCard: View {
             }
             
             filteredSessions.forEach { session in
-                let dayStart = calendar.startOfDay(for: session.startTime)
+                guard let startTime = session.startTime else { return }
+                let dayStart = calendar.startOfDay(for: startTime)
                 groupedSessions[dayStart, default: 0] += 1
             }
             
@@ -246,7 +254,8 @@ struct FrequencyChartCard: View {
             }
             
             filteredSessions.forEach { session in
-                let dayStart = calendar.startOfDay(for: session.startTime)
+                guard let startTime = session.startTime else { return }
+                let dayStart = calendar.startOfDay(for: startTime)
                 groupedSessions[dayStart, default: 0] += 1
             }
         }

@@ -12,7 +12,9 @@ import Combine
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var store: SessionStore
+    @StateObject private var syncMonitor = SyncMonitor.shared
     @State private var showingSessionEnd = false
+    @State private var showingSyncDebug = false
     
     init() {
         // Note: modelContext will be injected by environment
@@ -22,7 +24,10 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            VStack(spacing: 12) {
+                // Sync Status Badge
+                SyncBadge(monitor: syncMonitor)
+                
                 if let session = store.currentSession {
                     // Active session view
                     ActiveSessionView(session: session, store: store, showingSessionEnd: $showingSessionEnd)
@@ -32,16 +37,24 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Pee Pee Tracker")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        showingSyncDebug = true
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
             .sheet(isPresented: $showingSessionEnd) {
                 if let session = store.currentSession {
                     SessionEndView(session: session, store: store, isPresented: $showingSessionEnd)
                 }
             }
-            .onAppear {
-                // Initialize store with environment context
-                if let context = try? ModelContext(modelContext.container) {
-                    // Store is already initialized
-                }
+            .sheet(isPresented: $showingSyncDebug) {
+                SyncDebugView()
             }
         }
     }
@@ -76,7 +89,7 @@ struct ActiveSessionView: View {
     @ObservedObject var store: SessionStore
     @Binding var showingSessionEnd: Bool
     @State private var elapsedTime: TimeInterval = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var timerCancellable: AnyCancellable?
     
     var body: some View {
         VStack(spacing: 16) {
@@ -90,6 +103,12 @@ struct ActiveSessionView: View {
                 .foregroundStyle(.blue)
             
             Button(action: {
+                stopTimer()
+                
+                // End the session NOW to capture accurate duration
+                // (before showing the detail view)
+                session.endSession()
+                
                 showingSessionEnd = true
             }) {
                 Label("Stop", systemImage: "stop.fill")
@@ -99,9 +118,27 @@ struct ActiveSessionView: View {
             .tint(.red)
         }
         .padding()
-        .onReceive(timer) { _ in
-            elapsedTime = Date().timeIntervalSince(session.startTime)
+        .onAppear {
+            startTimer()
         }
+        .onDisappear {
+            stopTimer()
+        }
+    }
+    
+    private func startTimer() {
+        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                if !showingSessionEnd, let start = session.startTime {
+                    elapsedTime = Date().timeIntervalSince(start)
+                }
+            }
+    }
+    
+    private func stopTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
     }
     
     private func formatTime(_ time: TimeInterval) -> String {
@@ -196,6 +233,19 @@ struct SessionEndView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.green)
+                    
+                    // Cancel Button
+                    Button(action: {
+                        // Cancel the session completely - don't save anything
+                        store.cancelSession()
+                        isPresented = false
+                    }) {
+                        Text("Cancel")
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.red)
                 }
                 .padding()
             }
@@ -205,14 +255,19 @@ struct SessionEndView: View {
     }
 }
 
+
 // Extension to share ModelContainer
 extension ModelContainer {
     static var shared: ModelContainer = {
         let schema = Schema([PeeSession.self])
+        
+        // MUST use same container as iPhone app
+        let containerIdentifier = "iCloud.rens-corp.Pee-Pee-Tracker"
+        
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
-            cloudKitDatabase: .automatic
+            cloudKitDatabase: .private(containerIdentifier)
         )
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -221,6 +276,7 @@ extension ModelContainer {
         }
     }()
 }
+
 
 #Preview {
     ContentView()

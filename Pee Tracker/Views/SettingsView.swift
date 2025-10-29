@@ -57,8 +57,8 @@ struct SettingsView: View {
                     HStack {
                         Text("First Session")
                         Spacer()
-                        if let first = sessions.last {
-                            Text(first.startTime.formatted(date: .abbreviated, time: .omitted))
+                        if let first = sessions.last, let startTime = first.startTime {
+                            Text(startTime.formatted(date: .abbreviated, time: .omitted))
                                 .foregroundStyle(.secondary)
                         } else {
                             Text("No data")
@@ -371,15 +371,24 @@ class ExportEngine {
     static func exportToCSV(sessions: [PeeSession]) -> URL? {
         var csvString = "Date,Time,Duration (seconds),Feeling,Symptoms,Notes\n"
         
-        sessions.sorted { $0.startTime < $1.startTime }.forEach { session in
-            let date = session.startTime.formatted(date: .numeric, time: .omitted)
-            let time = session.startTime.formatted(date: .omitted, time: .shortened)
-            let duration = Int(session.duration)
-            let feeling = session.feeling.rawValue
-            let symptoms = session.symptoms.map { $0.rawValue }.joined(separator: "; ")
-            let notes = session.notes.replacingOccurrences(of: ",", with: ";")
+        sessions.sorted { 
+            guard let start1 = $0.startTime, let start2 = $1.startTime else { return false }
+            return start1 < start2
+        }.forEach { session in
+            guard let startTime = session.startTime,
+                  let duration = session.duration,
+                  let feeling = session.feeling else {
+                return // Skip incomplete sessions
+            }
             
-            csvString += "\"\(date)\",\"\(time)\",\(duration),\"\(feeling)\",\"\(symptoms)\",\"\(notes)\"\n"
+            let date = startTime.formatted(date: .numeric, time: .omitted)
+            let time = startTime.formatted(date: .omitted, time: .shortened)
+            let durationInt = Int(duration)
+            let feelingStr = feeling.rawValue
+            let symptoms = (session.symptoms ?? []).map { $0.rawValue }.joined(separator: "; ")
+            let notes = (session.notes ?? "").replacingOccurrences(of: ",", with: ";")
+            
+            csvString += "\"\(date)\",\"\(time)\",\(durationInt),\"\(feelingStr)\",\"\(symptoms)\",\"\(notes)\"\n"
         }
         
         let fileName = "PeeTracker_Export_\(Date().formatted(date: .numeric, time: .omitted)).csv"

@@ -11,6 +11,7 @@ import SwiftData
 struct HistoryView: View {
     let sessions: [PeeSession]
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var syncMonitor = SyncMonitor.shared
     @State private var searchText = ""
     @State private var filterFeeling: SessionFeeling?
     @State private var showingFilters = false
@@ -25,8 +26,8 @@ struct HistoryView: View {
         
         if !searchText.isEmpty {
             filtered = filtered.filter { session in
-                session.notes.localizedCaseInsensitiveContains(searchText) ||
-                session.symptoms.contains { $0.rawValue.localizedCaseInsensitiveContains(searchText) }
+                (session.notes ?? "").localizedCaseInsensitiveContains(searchText) ||
+                (session.symptoms ?? []).contains { $0.rawValue.localizedCaseInsensitiveContains(searchText) }
             }
         }
         
@@ -35,7 +36,8 @@ struct HistoryView: View {
     
     var groupedSessions: [Date: [PeeSession]] {
         Dictionary(grouping: filteredSessions) { session in
-            Calendar.current.startOfDay(for: session.startTime)
+            guard let startTime = session.startTime else { return Date.distantPast }
+            return Calendar.current.startOfDay(for: startTime)
         }
     }
     
@@ -70,6 +72,10 @@ struct HistoryView: View {
             .navigationTitle("History")
             .searchable(text: $searchText, prompt: "Search notes or symptoms")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    SyncIndicator(monitor: syncMonitor)
+                }
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showingFilters.toggle() }) {
                         Image(systemName: filterFeeling != nil ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
@@ -118,29 +124,35 @@ struct SessionRowView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 // Time
-                Text(session.startTime.formatted(date: .omitted, time: .shortened))
-                    .font(.headline)
+                if let startTime = session.startTime {
+                    Text(startTime.formatted(date: .omitted, time: .shortened))
+                        .font(.headline)
+                }
                 
                 Spacer()
                 
                 // Feeling
-                Text(session.feeling.emoji)
-                    .font(.title3)
+                if let feeling = session.feeling {
+                    Text(feeling.emoji)
+                        .font(.title3)
+                }
                 
                 // Duration
-                Text(formatDuration(session.duration))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.secondary.opacity(0.1))
-                    .cornerRadius(6)
+                if let duration = session.duration {
+                    Text(formatDuration(duration))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(6)
+                }
             }
             
             // Symptoms
-            if !session.symptoms.isEmpty {
+            if let symptoms = session.symptoms, !symptoms.isEmpty {
                 HStack(spacing: 6) {
-                    ForEach(session.symptoms, id: \.self) { symptom in
+                    ForEach(symptoms, id: \.self) { symptom in
                         HStack(spacing: 4) {
                             Text(symptom.icon)
                                 .font(.caption2)
@@ -157,8 +169,8 @@ struct SessionRowView: View {
             }
             
             // Notes preview
-            if !session.notes.isEmpty {
-                Text(session.notes)
+            if let notes = session.notes, !notes.isEmpty {
+                Text(notes)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
@@ -187,29 +199,35 @@ struct SessionDetailView: View {
         NavigationStack {
             List {
                 Section("Session Info") {
-                    LabeledContent("Date") {
-                        Text(session.startTime.formatted(date: .long, time: .omitted))
+                    if let startTime = session.startTime {
+                        LabeledContent("Date") {
+                            Text(startTime.formatted(date: .long, time: .omitted))
+                        }
+                        
+                        LabeledContent("Time") {
+                            Text(startTime.formatted(date: .omitted, time: .shortened))
+                        }
                     }
                     
-                    LabeledContent("Time") {
-                        Text(session.startTime.formatted(date: .omitted, time: .shortened))
+                    if let duration = session.duration {
+                        LabeledContent("Duration") {
+                            Text(formatDuration(duration))
+                        }
                     }
                     
-                    LabeledContent("Duration") {
-                        Text(formatDuration(session.duration))
-                    }
-                    
-                    LabeledContent("Feeling") {
-                        HStack {
-                            Text(session.feeling.emoji)
-                            Text(session.feeling.rawValue)
+                    if let feeling = session.feeling {
+                        LabeledContent("Feeling") {
+                            HStack {
+                                Text(feeling.emoji)
+                                Text(feeling.rawValue)
+                            }
                         }
                     }
                 }
                 
-                if !session.symptoms.isEmpty {
+                if let symptoms = session.symptoms, !symptoms.isEmpty {
                     Section("Symptoms") {
-                        ForEach(session.symptoms, id: \.self) { symptom in
+                        ForEach(symptoms, id: \.self) { symptom in
                             HStack {
                                 Text(symptom.icon)
                                 Text(symptom.rawValue)
@@ -218,9 +236,9 @@ struct SessionDetailView: View {
                     }
                 }
                 
-                if !session.notes.isEmpty {
+                if let notes = session.notes, !notes.isEmpty {
                     Section("Notes") {
-                        Text(session.notes)
+                        Text(notes)
                     }
                 }
             }

@@ -51,10 +51,14 @@ struct ContentView: View {
 extension ModelContainer {
     static var shared: ModelContainer = {
         let schema = Schema([PeeSession.self])
+        
+        // MUST use same container as app initialization
+        let containerIdentifier = "iCloud.rens-corp.Pee-Pee-Tracker"
+        
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
-            cloudKitDatabase: .automatic
+            cloudKitDatabase: .private(containerIdentifier)
         )
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])

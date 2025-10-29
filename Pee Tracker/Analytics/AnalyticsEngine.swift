@@ -27,10 +27,12 @@ class AnalyticsEngine {
     }
     
     static func averageDuration(sessions: [PeeSession]) -> TimeInterval {
-        let completedSessions = sessions.filter { $0.endTime != nil }
+        let completedSessions = sessions.filter { $0.endTime != nil && $0.duration != nil }
         guard !completedSessions.isEmpty else { return 0 }
         
-        let totalDuration = completedSessions.reduce(0.0) { $0 + $1.duration }
+        let totalDuration = completedSessions.reduce(0.0) { sum, session in
+            sum + (session.duration ?? 0)
+        }
         return totalDuration / Double(completedSessions.count)
     }
     
@@ -40,7 +42,7 @@ class AnalyticsEngine {
         var symptomCounts: [Symptom: Int] = [:]
         
         sessions.forEach { session in
-            session.symptoms.forEach { symptom in
+            (session.symptoms ?? []).forEach { symptom in
                 symptomCounts[symptom, default: 0] += 1
             }
         }
@@ -58,7 +60,7 @@ class AnalyticsEngine {
         var symptomCounts: [Symptom: Int] = [:]
         
         completedSessions.forEach { session in
-            session.symptoms.forEach { symptom in
+            (session.symptoms ?? []).forEach { symptom in
                 symptomCounts[symptom, default: 0] += 1
             }
         }
@@ -81,7 +83,8 @@ class AnalyticsEngine {
         var clusters: [TimeCluster: Int] = [:]
         
         sessions.filter { $0.endTime != nil }.forEach { session in
-            let hour = Calendar.current.component(.hour, from: session.startTime)
+            guard let startTime = session.startTime else { return }
+            let hour = Calendar.current.component(.hour, from: startTime)
             let cluster = TimeCluster.from(hour: hour)
             clusters[cluster, default: 0] += 1
         }
@@ -91,8 +94,8 @@ class AnalyticsEngine {
     
     static func nighttimeFrequency(sessions: [PeeSession]) -> Int {
         sessions.filter { session in
-            guard session.endTime != nil else { return false }
-            let hour = Calendar.current.component(.hour, from: session.startTime)
+            guard session.endTime != nil, let startTime = session.startTime else { return false }
+            let hour = Calendar.current.component(.hour, from: startTime)
             return hour >= 22 || hour < 6
         }.count
     }
@@ -101,7 +104,6 @@ class AnalyticsEngine {
     
     static func detectFrequencyTrend(sessions: [PeeSession], period: TrendPeriod) -> Trend {
         let now = Date()
-        let calendar = Calendar.current
         
         let currentPeriodStart = period.startDate(from: now)
         let previousPeriodStart = period.previousPeriodStart(from: currentPeriodStart)
@@ -146,8 +148,8 @@ class AnalyticsEngine {
             return endTime >= previousPeriodStart && endTime < currentPeriodStart
         }
         
-        let currentSymptomCount = currentSessions.filter { $0.symptoms.contains(symptom) }.count
-        let previousSymptomCount = previousSessions.filter { $0.symptoms.contains(symptom) }.count
+        let currentSymptomCount = currentSessions.filter { ($0.symptoms ?? []).contains(symptom) }.count
+        let previousSymptomCount = previousSessions.filter { ($0.symptoms ?? []).contains(symptom) }.count
         
         if currentSymptomCount > previousSymptomCount {
             let increase = Double(currentSymptomCount - previousSymptomCount) / Double(max(previousSymptomCount, 1)) * 100

@@ -11,9 +11,10 @@ import Combine
 
 struct LoggingView: View {
     @ObservedObject var store: SessionStore
+    @StateObject private var syncMonitor = SyncMonitor.shared
     @State private var showingSessionEnd = false
     @State private var elapsedTime: TimeInterval = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var timerCancellable: AnyCancellable?
     
     var body: some View {
         NavigationStack {
@@ -27,6 +28,9 @@ struct LoggingView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
+                    // Sync Status Badge
+                    SyncStatusBadge(monitor: syncMonitor)
+                    
                     if let session = store.currentSession {
                         // Active session
                         activeSessionView(session: session)
@@ -38,12 +42,39 @@ struct LoggingView: View {
                 .padding()
             }
             .navigationTitle("Pee Pee Tracker")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SyncIndicator(monitor: syncMonitor)
+                }
+            }
             .sheet(isPresented: $showingSessionEnd) {
                 if let session = store.currentSession {
                     SessionEndDetailView(session: session, store: store, isPresented: $showingSessionEnd)
                 }
             }
+            .onAppear {
+                startTimer()
+            }
+            .onDisappear {
+                stopTimer()
+            }
         }
+    }
+    
+    private func startTimer() {
+        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                // Only update timer if session is active AND sheet is not showing
+                if !showingSessionEnd, store.currentSession != nil, let start = store.currentSession?.startTime {
+                    elapsedTime = Date().timeIntervalSince(start)
+                }
+            }
+    }
+    
+    private func stopTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
     }
     
     private var readyToStartView: some View {
@@ -100,6 +131,12 @@ struct LoggingView: View {
             
             VStack(spacing: 12) {
                 Button(action: {
+                    // End the session NOW to capture accurate duration
+                    // (before showing the detail view)
+                    if let session = store.currentSession {
+                        session.endSession()
+                    }
+                    
                     showingSessionEnd = true
                 }) {
                     Label("Complete Session", systemImage: "checkmark.circle.fill")
@@ -114,6 +151,7 @@ struct LoggingView: View {
                 
                 Button(action: {
                     store.cancelSession()
+                    elapsedTime = 0
                 }) {
                     Label("Cancel", systemImage: "xmark.circle")
                         .font(.subheadline)
@@ -122,11 +160,6 @@ struct LoggingView: View {
             }
             
             Spacer()
-        }
-        .onReceive(timer) { _ in
-            if store.currentSession != nil {
-                elapsedTime = Date().timeIntervalSince(session.startTime)
-            }
         }
     }
     
@@ -155,11 +188,8 @@ struct SessionEndDetailView: View {
                 Section {
                     Picker("How did it feel?", selection: $feeling) {
                         ForEach(SessionFeeling.allCases, id: \.self) { feelingOption in
-                            HStack {
-                                Text(feelingOption.emoji)
-                                Text(feelingOption.rawValue)
-                            }
-                            .tag(feelingOption)
+                            Text("\(feelingOption.emoji) \(feelingOption.rawValue)")
+                                .tag(feelingOption)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -213,15 +243,19 @@ struct SessionEndDetailView: View {
                     HStack {
                         Text("Duration")
                         Spacer()
-                        Text(formatDuration(Date().timeIntervalSince(session.startTime)))
-                            .foregroundStyle(.secondary)
+                        if let start = session.startTime {
+                            Text(formatDuration(Date().timeIntervalSince(start)))
+                                .foregroundStyle(.secondary)
+                        }
                     }
                     
                     HStack {
                         Text("Time")
                         Spacer()
-                        Text(session.startTime.formatted(date: .omitted, time: .shortened))
-                            .foregroundStyle(.secondary)
+                        if let start = session.startTime {
+                            Text(start.formatted(date: .omitted, time: .shortened))
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 } header: {
                     Text("Session Details")
@@ -243,6 +277,8 @@ struct SessionEndDetailView: View {
                 
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
+                        // Cancel the session completely - don't save anything
+                        store.cancelSession()
                         isPresented = false
                     }
                 }

@@ -10,13 +10,14 @@ import SwiftData
 
 @Model
 final class PeeSession {
-    var id: UUID
-    var startTime: Date
+    // All properties must be optional for CloudKit compatibility
+    var id: UUID?
+    var startTime: Date?
     var endTime: Date?
-    var duration: TimeInterval
-    var feeling: SessionFeeling
-    var symptoms: [Symptom]
-    var notes: String
+    var duration: TimeInterval?
+    var feeling: SessionFeeling?
+    var symptoms: [Symptom]?
+    var notes: String?
     
     var isActive: Bool {
         endTime == nil
@@ -45,10 +46,14 @@ final class PeeSession {
             print("⚠️ Session already ended at \(endTime!)")
             return 
         }
+        guard let start = startTime else {
+            print("⚠️ Cannot end session: missing start time")
+            return
+        }
         let now = Date()
         endTime = now
-        duration = now.timeIntervalSince(startTime)
-        print("✅ Session ended. Duration: \(duration)s")
+        duration = now.timeIntervalSince(start)
+        print("✅ Session ended. Duration: \(duration ?? 0)s")
     }
 }
 
