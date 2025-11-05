@@ -46,7 +46,7 @@ The iPhone app offers comprehensive tracking and analysis:
 - Negative session percentage
 - Most common symptoms
 
-**AI-Powered Health Insights:**
+**Health Insights:**
 The app analyzes your data to detect:
 - ⚠️ **Critical Issues**: Blood in urine, severe symptoms requiring immediate attention
 - 🔴 **High Priority**: Recurring pain, worsening symptoms, significant frequency changes
@@ -127,7 +127,7 @@ class PeeSession {
 ### Viewing Insights
 1. Open the iPhone app
 2. Navigate to the "Insights" tab
-3. Switch between "Charts" and "AI Insights"
+3. Switch between "Charts" and "Health Insights"
 4. Adjust timeframe to view different periods
 5. Tap insights for detailed recommendations
 
@@ -141,7 +141,7 @@ class PeeSession {
 
 ⚠️ **Important**: This app is for informational and tracking purposes only and does not constitute medical advice. Always consult with a qualified healthcare professional for medical concerns, diagnosis, or treatment decisions.
 
-The AI-powered insights are based on general patterns and should not replace professional medical evaluation.
+The insights are based on general patterns and should not replace professional medical evaluation.
 
 ## Requirements
 

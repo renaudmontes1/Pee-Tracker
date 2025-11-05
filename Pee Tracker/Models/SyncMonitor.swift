@@ -68,7 +68,12 @@ enum SyncStatus: Equatable {
     
     var message: String {
         switch self {
-        case .idle: return "Not syncing"
+        case .idle:
+#if os(watchOS)
+            return "Ready"
+#else
+            return "Not syncing"
+#endif
         case .syncing: return "Syncing..."
         case .success: return "Synced"
         case .error(let message): return message
@@ -201,7 +206,69 @@ struct SyncStatusBadge: View {
 struct SyncIndicator: View {
     @ObservedObject var monitor: SyncMonitor
     @State private var showDetails = false
-    
+
+#if os(watchOS)
+    // Compact Sync Badge for Watch
+    struct SyncBadge: View {
+        @ObservedObject var monitor: SyncMonitor
+
+        var body: some View {
+            HStack(spacing: 4) {
+                Image(systemName: monitor.status.icon)
+                    .foregroundStyle(monitor.status.color)
+                    .symbolEffect(.pulse, isActive: monitor.status == .syncing)
+                    .font(.caption2)
+
+                Text(monitor.status.message)
+                    .font(.caption2)
+                    .foregroundStyle(monitor.status.color)
+            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(monitor.status.color.opacity(0.15))
+            .cornerRadius(6)
+        }
+    }
+#endif
+
+    @ViewBuilder
+    private var detailContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: monitor.status.icon)
+                    .foregroundStyle(monitor.status.color)
+                    .font(.title2)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("iCloud Sync")
+                        .font(.headline)
+                    Text(monitor.status.message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if let lastSync = monitor.lastSyncTime {
+                Divider()
+                Text("Last synced: \(lastSync.formatted(date: .omitted, time: .shortened))")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            if case .error(let message) = monitor.status {
+                Divider()
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .padding(.top, 4)
+            }
+        }
+        .padding()
+#if !os(watchOS)
+        .frame(minWidth: 250)
+#endif
+    }
+
     var body: some View {
         Button(action: {
             showDetails.toggle()
@@ -210,39 +277,14 @@ struct SyncIndicator: View {
                 .foregroundStyle(monitor.status.color)
                 .symbolEffect(.pulse, isActive: monitor.status == .syncing)
         }
-        .popover(isPresented: $showDetails) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: monitor.status.icon)
-                        .foregroundStyle(monitor.status.color)
-                        .font(.title2)
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("iCloud Sync")
-                            .font(.headline)
-                        Text(monitor.status.message)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                
-                if let lastSync = monitor.lastSyncTime {
-                    Divider()
-                    Text("Last synced: \(lastSync.formatted(date: .omitted, time: .shortened))")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-                
-                if case .error(let message) = monitor.status {
-                    Divider()
-                    Text(message)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .padding(.top, 4)
-                }
-            }
-            .padding()
-            .frame(minWidth: 250)
+#if os(watchOS)
+        .sheet(isPresented: $showDetails) {
+            detailContent
         }
+#else
+        .popover(isPresented: $showDetails) {
+            detailContent
+        }
+#endif
     }
 }

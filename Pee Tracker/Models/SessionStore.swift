@@ -13,9 +13,11 @@ class SessionStore: ObservableObject {
     @Published var currentSession: PeeSession?
     
     private let modelContext: ModelContext
+    private let platformName: String
     
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, platformName: String = "Device") {
         self.modelContext = modelContext
+        self.platformName = platformName
     }
     
     func startSession() {
@@ -24,7 +26,7 @@ class SessionStore: ObservableObject {
         // Create session with CURRENT device time
         let session = PeeSession()
         print("🔵 Session started at: \(session.startTime)")
-        SyncMonitor.shared.logEvent("Session started on iPhone", type: .info)
+    SyncMonitor.shared.logEvent("Session started on \(platformName)", type: .info)
         
         // Insert into local context FIRST
         modelContext.insert(session)
@@ -36,7 +38,7 @@ class SessionStore: ObservableObject {
             try modelContext.save()
             print("✅ Session saved to LOCAL database (CloudKit will sync in background)")
             SyncMonitor.shared.reportSyncSuccess()
-            SyncMonitor.shared.logEvent("Session saved locally on iPhone", type: .success)
+            SyncMonitor.shared.logEvent("Session saved locally on \(platformName)", type: .success)
         } catch {
             print("❌ Failed to save session locally: \(error)")
             SyncMonitor.shared.reportSyncError("Failed to save session: \(error.localizedDescription)")
@@ -50,7 +52,7 @@ class SessionStore: ObservableObject {
         }
         
         print("🔵 Completing session: \(session.id)")
-        SyncMonitor.shared.logEvent("Completing session on iPhone", type: .info)
+        SyncMonitor.shared.logEvent("Completing session on \(platformName)", type: .info)
         
         // Session's endTime and duration were already set when user pressed Complete Session button
         // Just update the feeling, symptoms, and notes
@@ -68,7 +70,7 @@ class SessionStore: ObservableObject {
             try modelContext.save()
             print("✅ Session saved to LOCAL database (CloudKit will sync in background)")
             SyncMonitor.shared.reportSyncSuccess()
-            SyncMonitor.shared.logEvent("Session completed and saved on iPhone (Duration: \(Int(session.duration ?? 0))s)", type: .success)
+            SyncMonitor.shared.logEvent("Session completed and saved on \(platformName) (Duration: \(Int(session.duration ?? 0))s)", type: .success)
         } catch {
             print("❌ Failed to save session: \(error)")
             SyncMonitor.shared.reportSyncError("Failed to save session: \(error.localizedDescription)")

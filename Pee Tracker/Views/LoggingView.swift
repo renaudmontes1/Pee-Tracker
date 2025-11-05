@@ -28,9 +28,6 @@ struct LoggingView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
-                    // Sync Status Badge
-                    SyncStatusBadge(monitor: syncMonitor)
-                    
                     if let session = store.currentSession {
                         // Active session
                         activeSessionView(session: session)
@@ -42,14 +39,20 @@ struct LoggingView: View {
                 .padding()
             }
             .navigationTitle("Pee Pee Tracker")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    SyncIndicator(monitor: syncMonitor)
-                }
-            }
             .sheet(isPresented: $showingSessionEnd) {
                 if let session = store.currentSession {
                     SessionEndDetailView(session: session, store: store, isPresented: $showingSessionEnd)
+                }
+            }
+            .onChange(of: showingSessionEnd) { oldValue, newValue in
+                // If the sheet is dismissed and there's still a current session (user cancelled)
+                // restart the timer. Otherwise, reset elapsed time.
+                if !newValue {
+                    if store.currentSession != nil {
+                        startTimer()
+                    } else {
+                        elapsedTime = 0
+                    }
                 }
             }
             .onAppear {
@@ -137,6 +140,9 @@ struct LoggingView: View {
                         session.endSession()
                     }
                     
+                    // Stop the timer to prevent it from continuing while entering notes
+                    stopTimer()
+                    
                     showingSessionEnd = true
                 }) {
                     Label("Complete Session", systemImage: "checkmark.circle.fill")
@@ -192,7 +198,9 @@ struct SessionEndDetailView: View {
                                 .tag(feelingOption)
                         }
                     }
+#if !os(watchOS)
                     .pickerStyle(.segmented)
+#endif
                     .onChange(of: feeling) { oldValue, newValue in
                         if newValue == .positive {
                             selectedSymptoms.removeAll()
@@ -229,8 +237,8 @@ struct SessionEndDetailView: View {
                 
                 // Notes Section
                 Section {
-                    TextEditor(text: $notes)
-                        .frame(minHeight: 100)
+                    TextField("Add notes here...", text: $notes, axis: .vertical)
+                        .lineLimit(5...10)
                         .focused($notesFieldFocused)
                 } header: {
                     Text("Notes (Optional)")
@@ -283,11 +291,13 @@ struct SessionEndDetailView: View {
                     }
                 }
                 
+#if !os(watchOS)
                 ToolbarItem(placement: .keyboard) {
                     Button("Done") {
                         notesFieldFocused = false
                     }
                 }
+#endif
             }
         }
     }
@@ -301,5 +311,5 @@ struct SessionEndDetailView: View {
 
 #Preview {
     let context = ModelContext(ModelContainer.shared)
-    LoggingView(store: SessionStore(modelContext: context))
+    LoggingView(store: SessionStore(modelContext: context, platformName: "Preview"))
 }

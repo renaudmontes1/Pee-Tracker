@@ -24,7 +24,9 @@ struct InsightsView: View {
                         Text(tab.rawValue).tag(tab)
                     }
                 }
+#if !os(watchOS)
                 .pickerStyle(.segmented)
+#endif
                 .padding()
                 
                 // Content
@@ -39,55 +41,52 @@ struct InsightsView: View {
                                     Text(timeframe.rawValue).tag(timeframe)
                                 }
                             }
+#if !os(watchOS)
                             .pickerStyle(.segmented)
+#endif
                             .padding(.horizontal)
                     
-                    // Weekly Summary Card
-                    if selectedTimeframe == .week {
-                        WeeklySummaryCard(sessions: sessions)
-                            .padding(.horizontal)
+                            // Weekly Summary Card
+                            if selectedTimeframe == .week {
+                                WeeklySummaryCard(sessions: sessions)
+                                    .padding(.horizontal)
+                            }
+                            
+                            // Frequency Chart
+                            FrequencyChartCard(sessions: sessions, timeframe: selectedTimeframe)
+                                .padding(.horizontal)
+                            
+                            // Time of Day Distribution
+                            TimeOfDayChartCard(sessions: sessions)
+                                .padding(.horizontal)
+                            
+                            // Feeling Distribution
+                            FeelingDistributionCard(sessions: sessions, timeframe: selectedTimeframe)
+                                .padding(.horizontal)
+                            
+                            // Symptom Frequency
+                            if sessions.contains(where: { !($0.symptoms ?? []).isEmpty }) {
+                                SymptomFrequencyCard(sessions: sessions, timeframe: selectedTimeframe)
+                                    .padding(.horizontal)
+                            }
+                            
+                            // Trend Indicators
+                            TrendIndicatorsCard(sessions: sessions)
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical)
                     }
-                    
-                    // Frequency Chart
-                    FrequencyChartCard(sessions: sessions, timeframe: selectedTimeframe)
-                        .padding(.horizontal)
-                    
-                    // Time of Day Distribution
-                    TimeOfDayChartCard(sessions: sessions)
-                        .padding(.horizontal)
-                    
-                    // Feeling Distribution
-                    FeelingDistributionCard(sessions: sessions, timeframe: selectedTimeframe)
-                        .padding(.horizontal)
-                    
-                    // Symptom Frequency
-                    if sessions.contains(where: { !($0.symptoms ?? []).isEmpty }) {
-                        SymptomFrequencyCard(sessions: sessions, timeframe: selectedTimeframe)
-                            .padding(.horizontal)
-                    }
-                    
-                    // Trend Indicators
-                    TrendIndicatorsCard(sessions: sessions)
-                        .padding(.horizontal)
-                }
-                .padding(.vertical)
-            }
-            .background(Color(.systemGroupedBackground))
+                    .background(Color.insightsContainerBackground)
                 }
             }
             .navigationTitle("Insights")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    SyncIndicator(monitor: syncMonitor)
-                }
-            }
         }
     }
 }
 
 enum InsightsTab: String, CaseIterable {
     case charts = "Charts"
-    case aiInsights = "AI Insights"
+    case aiInsights = "Health Insights"
 }
 
 // MARK: - Weekly Summary Card
@@ -161,7 +160,7 @@ struct WeeklySummaryCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(Color.insightsCardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
@@ -296,7 +295,7 @@ struct FrequencyChartCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(Color.insightsCardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
@@ -366,7 +365,7 @@ struct TimeOfDayChartCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(Color.insightsCardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
@@ -449,7 +448,7 @@ struct FeelingDistributionCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(Color.insightsCardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
@@ -504,7 +503,7 @@ struct SymptomFrequencyCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(Color.insightsCardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
@@ -542,7 +541,7 @@ struct TrendIndicatorsCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(Color.insightsCardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
@@ -573,6 +572,24 @@ struct TrendRow: View {
         case .decreasing: return .green
         case .stable: return .blue
         }
+    }
+}
+
+private extension Color {
+    static var insightsContainerBackground: Color {
+#if os(watchOS)
+    Color.primary.opacity(0.05)
+#else
+    Color(.systemGroupedBackground)
+#endif
+    }
+    
+    static var insightsCardBackground: Color {
+#if os(watchOS)
+    Color.primary.opacity(0.08)
+#else
+    Color(.systemBackground)
+#endif
     }
 }
 

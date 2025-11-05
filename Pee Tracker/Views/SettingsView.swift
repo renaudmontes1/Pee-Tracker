@@ -8,17 +8,23 @@
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
+#if !os(watchOS) && canImport(UIKit)
+import UIKit
+#endif
 
 struct SettingsView: View {
     let sessions: [PeeSession]
+#if !os(watchOS)
     @State private var showingExportSheet = false
     @State private var showingDoctorSummary = false
     @State private var exportFormat: ExportFormat = .pdf
     @State private var exportPeriod: TrendPeriod = .month
+#endif
     
     var body: some View {
         NavigationStack {
             List {
+#if !os(watchOS)
                 // Export Section
                 Section {
                     Button(action: {
@@ -37,6 +43,7 @@ struct SettingsView: View {
                 } footer: {
                     Text("Export your tracking data for medical consultations or personal records")
                 }
+#endif
                 
                 // Statistics Section
                 Section {
@@ -103,16 +110,19 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+#if !os(watchOS)
             .sheet(isPresented: $showingExportSheet) {
                 ExportDataView(sessions: sessions, isPresented: $showingExportSheet)
             }
             .sheet(isPresented: $showingDoctorSummary) {
                 DoctorSummaryView(sessions: sessions, isPresented: $showingDoctorSummary)
             }
+#endif
         }
     }
 }
 
+#if !os(watchOS)
 // MARK: - Export Data View
 struct ExportDataView: View {
     let sessions: [PeeSession]
@@ -266,6 +276,7 @@ struct DoctorSummaryView: View {
         }
     }
 }
+#endif
 
 // MARK: - Privacy Policy View
 struct PrivacyPolicyView: View {
@@ -421,6 +432,7 @@ class ExportEngine {
 }
 
 // MARK: - Share Sheet
+#if !os(watchOS)
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     
@@ -430,6 +442,7 @@ struct ShareSheet: UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
+#endif
 
 #Preview {
     SettingsView(sessions: [])

@@ -116,28 +116,6 @@ struct SyncDebugView: View {
                             }
                         }
                     }
-                    
-                    Divider()
-                    
-                    // Refresh Button
-                    VStack(spacing: 8) {
-                        Button(action: {
-                            checkCloudKitStatus()
-                        }) {
-                            Label("Refresh Status", systemImage: "arrow.clockwise")
-                                .font(.caption)
-                        }
-                        .buttonStyle(.bordered)
-                        
-                        Button(action: {
-                            forceSyncCheck()
-                        }) {
-                            Label("Check for New Data", systemImage: "icloud.and.arrow.down")
-                                .font(.caption)
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.blue)
-                    }
                 }
                 .padding()
             }
@@ -245,28 +223,6 @@ struct SyncDebugView: View {
         if let sessions = try? modelContext.fetch(descriptor) {
             localSessionCount = sessions.count
             SyncMonitor.shared.logEvent("Local database has \(localSessionCount) sessions", type: .info)
-        }
-    }
-    
-    private func forceSyncCheck() {
-        SyncMonitor.shared.logEvent("Manual sync check requested", type: .info)
-        
-        // Re-fetch to trigger any pending CloudKit operations
-        let descriptor = FetchDescriptor<PeeSession>(
-            sortBy: [SortDescriptor(\.startTime, order: .reverse)]
-        )
-        
-        if let sessions = try? modelContext.fetch(descriptor) {
-            localSessionCount = sessions.count
-            SyncMonitor.shared.logEvent("Found \(localSessionCount) sessions after sync check", type: .success)
-        }
-        
-        // Save context to trigger CloudKit sync
-        do {
-            try modelContext.save()
-            SyncMonitor.shared.logEvent("Triggered CloudKit sync check", type: .info)
-        } catch {
-            SyncMonitor.shared.logEvent("Error during sync check: \(error.localizedDescription)", type: .error)
         }
     }
 }

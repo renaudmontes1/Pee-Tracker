@@ -88,7 +88,7 @@ struct HealthInsightsView: View {
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+    .background(containerBackground)
     }
 }
 
@@ -180,9 +180,29 @@ struct InsightCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+    .background(cardBackground)
         .cornerRadius(12)
         .shadow(color: priorityColor.opacity(0.2), radius: 4, y: 2)
+    }
+}
+
+private extension HealthInsightsView {
+    var containerBackground: Color {
+#if os(watchOS)
+        Color.primary.opacity(0.05)
+#else
+        Color(.systemGroupedBackground)
+#endif
+    }
+}
+
+private extension InsightCard {
+    var cardBackground: Color {
+#if os(watchOS)
+        Color.primary.opacity(0.08)
+#else
+    Color(.systemBackground)
+#endif
     }
 }
 

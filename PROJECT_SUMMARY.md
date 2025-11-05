@@ -222,7 +222,7 @@ User Action → SessionStore → SwiftData → CloudKit
 - ✅ All chart timeframes
 - ✅ All export capabilities
 - ✅ Privacy features
-- ✅ AI insights
+- ✅ Health insights
 
 ### Code Quality
 - ✅ No compilation errors

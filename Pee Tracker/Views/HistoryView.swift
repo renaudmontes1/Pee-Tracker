@@ -72,10 +72,6 @@ struct HistoryView: View {
             .navigationTitle("History")
             .searchable(text: $searchText, prompt: "Search notes or symptoms")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    SyncIndicator(monitor: syncMonitor)
-                }
-                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showingFilters.toggle() }) {
                         Image(systemName: filterFeeling != nil ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
@@ -194,6 +190,11 @@ struct SessionRowView: View {
 struct SessionDetailView: View {
     let session: PeeSession
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    
+    @State private var editedNotes: String = ""
+    @State private var hasUnsavedChanges = false
+    @FocusState private var notesFieldFocused: Bool
     
     var body: some View {
         NavigationStack {
@@ -236,21 +237,60 @@ struct SessionDetailView: View {
                     }
                 }
                 
-                if let notes = session.notes, !notes.isEmpty {
-                    Section("Notes") {
-                        Text(notes)
-                    }
+                // Notes Section - Always Editable
+                Section("Notes") {
+                    TextField("Add notes here...", text: $editedNotes, axis: .vertical)
+                        .lineLimit(3...10)
+                        .focused($notesFieldFocused)
+                        .onChange(of: editedNotes) { oldValue, newValue in
+                            hasUnsavedChanges = (newValue != (session.notes ?? ""))
+                        }
                 }
             }
             .navigationTitle("Session Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Done") {
+                        if hasUnsavedChanges {
+                            saveChanges()
+                        }
                         dismiss()
                     }
                 }
+                
+                if hasUnsavedChanges {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Save") {
+                            saveChanges()
+                        }
+                    }
+                }
+                
+#if !os(watchOS)
+                ToolbarItem(placement: .keyboard) {
+                    Button("Done") {
+                        notesFieldFocused = false
+                    }
+                }
+#endif
             }
+        }
+        .onAppear {
+            editedNotes = session.notes ?? ""
+        }
+    }
+    
+    private func saveChanges() {
+        session.notes = editedNotes.isEmpty ? nil : editedNotes
+        
+        do {
+            try modelContext.save()
+            hasUnsavedChanges = false
+            SyncMonitor.shared.logEvent("Session notes updated on iPhone", type: .success)
+        } catch {
+            print("❌ Failed to save changes: \(error)")
+            SyncMonitor.shared.logEvent("Failed to update session: \(error.localizedDescription)", type: .error)
         }
     }
     

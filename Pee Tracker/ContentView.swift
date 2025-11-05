@@ -15,7 +15,7 @@ struct ContentView: View {
     
     init() {
         let context = ModelContext(ModelContainer.shared)
-        _store = StateObject(wrappedValue: SessionStore(modelContext: context))
+        _store = StateObject(wrappedValue: SessionStore(modelContext: context, platformName: "iPhone"))
     }
     
     var body: some View {
@@ -52,7 +52,7 @@ extension ModelContainer {
     static var shared: ModelContainer = {
         let schema = Schema([PeeSession.self])
         
-        // MUST use same container as app initialization
+        // MUST use same container as Watch app
         let containerIdentifier = "iCloud.rens-corp.Pee-Pee-Tracker"
         
         let modelConfiguration = ModelConfiguration(
@@ -60,10 +60,28 @@ extension ModelContainer {
             isStoredInMemoryOnly: false,
             cloudKitDatabase: .private(containerIdentifier)
         )
+        
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            print("✅ iPhone: Shared ModelContainer initialized with CloudKit sync")
+            print("📦 Container: \(containerIdentifier)")
+            return container
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("❌ iPhone: Failed to create shared ModelContainer: \(error)")
+            print("⚠️ CloudKit sync will NOT work. Check:")
+            print("   1. iCloud capability enabled in Xcode")
+            print("   2. Signed in with Apple ID")
+            print("   3. Container '\(containerIdentifier)' exists")
+            
+            // Fallback to local-only
+            let fallbackConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            do {
+                let container = try ModelContainer(for: schema, configurations: [fallbackConfig])
+                print("⚠️ iPhone: Using local storage only (no sync)")
+                return container
+            } catch {
+                fatalError("iPhone: Could not create ModelContainer: \(error)")
+            }
         }
     }()
 }

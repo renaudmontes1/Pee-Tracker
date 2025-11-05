@@ -19,43 +19,52 @@ struct ContentView: View {
     init() {
         // Note: modelContext will be injected by environment
         let context = ModelContext(ModelContainer.shared)
-        _store = StateObject(wrappedValue: SessionStore(modelContext: context))
+        _store = StateObject(wrappedValue: SessionStore(modelContext: context, platformName: "Watch"))
     }
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 12) {
-                // Sync Status Badge
-                SyncBadge(monitor: syncMonitor)
-                
-                if let session = store.currentSession {
-                    // Active session view
-                    ActiveSessionView(session: session, store: store, showingSessionEnd: $showingSessionEnd)
-                } else {
-                    // Start session view
-                    StartSessionView(store: store)
-                }
-            }
-            .navigationTitle("Pee Pee Tracker")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: {
-                        showingSyncDebug = true
-                    }) {
-                        Image(systemName: "gearshape.fill")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+        TabView {
+            // Logging Tab
+            NavigationStack {
+                VStack(spacing: 12) {
+                    if let session = store.currentSession {
+                        // Active session view
+                        ActiveSessionView(session: session, store: store, showingSessionEnd: $showingSessionEnd)
+                    } else {
+                        // Start session view
+                        StartSessionView(store: store)
                     }
                 }
-            }
-            .sheet(isPresented: $showingSessionEnd) {
-                if let session = store.currentSession {
-                    SessionEndView(session: session, store: store, isPresented: $showingSessionEnd)
+                .navigationTitle("Log")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: {
+                            showingSyncDebug = true
+                        }) {
+                            Image(systemName: "gearshape.fill")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .sheet(isPresented: $showingSessionEnd) {
+                    if let session = store.currentSession {
+                        SessionEndView(session: session, store: store, isPresented: $showingSessionEnd)
+                    }
+                }
+                .sheet(isPresented: $showingSyncDebug) {
+                    SyncDebugView()
                 }
             }
-            .sheet(isPresented: $showingSyncDebug) {
-                SyncDebugView()
+            .tabItem {
+                Label("Log", systemImage: "drop.fill")
             }
+            
+            // History Tab
+            WatchHistoryView()
+                .tabItem {
+                    Label("History", systemImage: "list.bullet")
+                }
         }
     }
 }
@@ -269,10 +278,28 @@ extension ModelContainer {
             isStoredInMemoryOnly: false,
             cloudKitDatabase: .private(containerIdentifier)
         )
+        
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            print("✅ Watch: Shared ModelContainer initialized with CloudKit sync")
+            print("📦 Container: \(containerIdentifier)")
+            return container
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("❌ Watch: Failed to create shared ModelContainer: \(error)")
+            print("⚠️ CloudKit sync will NOT work. Check:")
+            print("   1. iCloud capability enabled in Xcode")
+            print("   2. Signed in with Apple ID")
+            print("   3. Container '\(containerIdentifier)' exists")
+            
+            // Fallback to local-only
+            let fallbackConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            do {
+                let container = try ModelContainer(for: schema, configurations: [fallbackConfig])
+                print("⚠️ Watch: Using local storage only (no sync)")
+                return container
+            } catch {
+                fatalError("Watch: Could not create ModelContainer: \(error)")
+            }
         }
     }()
 }

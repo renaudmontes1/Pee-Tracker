@@ -11,7 +11,7 @@ Pee Tracker/
 │   ├── LoggingView.swift          # iPhone session tracking
 │   ├── HistoryView.swift          # Session history & search
 │   ├── InsightsView.swift         # Charts & analytics
-│   ├── HealthInsightsView.swift   # AI insights display
+│   ├── HealthInsightsView.swift   # Health insights display
 │   └── SettingsView.swift         # Settings & export
 ├── Analytics/
 │   ├── AnalyticsEngine.swift      # Statistical analysis
@@ -80,7 +80,7 @@ Dual-tab interface:
 - Symptom frequency bars
 - Trend indicators
 
-**AI Insights Tab:**
+**Health Insights Tab:**
 - Priority-sorted insights (Critical → Low)
 - Expandable cards
 - Color-coded by severity
@@ -169,7 +169,7 @@ let modelConfiguration = ModelConfiguration(
    - [x] Symptom analysis
    - [x] Trend indicators
 
-6. **AI Insights**
+6. **Health Insights**
    - [x] Frequency analysis
    - [x] Symptom pattern detection
    - [x] Critical alerts (blood, pain)

@@ -39,15 +39,36 @@
 		849FFF312EAFD5C90044F628 /* Pee Tracker Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pee Tracker Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		849146412EB327F40043FF4C /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/PeeSession.swift,
+				Models/SessionStore.swift,
+				Models/SubscriptionManager.swift,
+				Models/SyncMonitor.swift,
+			);
+			target = 849FFF302EAFD5C90044F628 /* Pee Tracker Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		849FFF262EAFD5C40044F628 /* Pee Tracker */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				849146412EB327F40043FF4C /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */,
+			);
 			path = "Pee Tracker";
 			sourceTree = "<group>";
 		};
 		849FFF352EAFD5C90044F628 /* Pee Tracker Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Pee Tracker Watch App";
+			sourceTree = "<group>";
+		};
+		849FFF452EAFD9A00044F628 /* Pee Tracker/Models */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Pee Tracker/Models";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +96,7 @@
 			children = (
 				849FFF262EAFD5C40044F628 /* Pee Tracker */,
 				849FFF352EAFD5C90044F628 /* Pee Tracker Watch App */,
+				849FFF452EAFD9A00044F628 /* Pee Tracker/Models */,
 				849FFF252EAFD5C40044F628 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,6 +151,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				849FFF352EAFD5C90044F628 /* Pee Tracker Watch App */,
+				849FFF452EAFD9A00044F628 /* Pee Tracker/Models */,
 			);
 			name = "Pee Tracker Watch App";
 			packageProductDependencies = (
