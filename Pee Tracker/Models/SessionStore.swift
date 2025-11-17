@@ -25,7 +25,7 @@ class SessionStore: ObservableObject {
         
         // Create session with CURRENT device time
         let session = PeeSession()
-        print("🔵 Session started at: \(session.startTime)")
+        print("🔵 Session started at: \(session.startTime?.description ?? "unknown")")
     SyncMonitor.shared.logEvent("Session started on \(platformName)", type: .info)
         
         // Insert into local context FIRST
@@ -51,7 +51,7 @@ class SessionStore: ObservableObject {
             return 
         }
         
-        print("🔵 Completing session: \(session.id)")
+        print("🔵 Completing session: \(session.id?.uuidString ?? "unknown")")
         SyncMonitor.shared.logEvent("Completing session on \(platformName)", type: .info)
         
         // Session's endTime and duration were already set when user pressed Complete Session button
@@ -60,9 +60,9 @@ class SessionStore: ObservableObject {
         session.symptoms = symptoms
         session.notes = notes
         
-        print("⏱️  Start: \(session.startTime)")
-        print("⏱️  End: \(session.endTime!)")
-        print("⏱️  Duration: \(session.duration)s")
+        print("⏱️  Start: \(session.startTime?.description ?? "unknown")")
+        print("⏱️  End: \(session.endTime?.description ?? "unknown")")
+        print("⏱️  Duration: \(session.duration ?? 0)s")
         
         // Save to LOCAL database IMMEDIATELY (CloudKit syncs in background)
         do {

@@ -16,6 +16,10 @@ class SubscriptionManager {
     // MUST use the same container as SwiftData ModelConfiguration
     private let database = CKContainer(identifier: "iCloud.rens-corp.Pee-Pee-Tracker").privateCloudDatabase
     
+    // Track when user last viewed history
+    private let lastViewedKey = "lastViewedHistoryDate"
+    private let badgeCountKey = "appBadgeCount"
+    
     private init() {}
     
     func registerSubscription() {
@@ -43,17 +47,14 @@ class SubscriptionManager {
         let subscription = CKQuerySubscription(recordType: "CD_PeeSession",
                                                predicate: NSPredicate(value: true),
                                                subscriptionID: subscriptionID,
-                                               options: .firesOnRecordUpdate)
+                                               options: .firesOnRecordCreation)  // Changed to firesOnRecordCreation to catch new sessions
         
         let notificationInfo = CKSubscription.NotificationInfo()
-        notificationInfo.title = "Session Logged"
-        notificationInfo.alertBody = "A new session was just completed on your iPhone."
+        notificationInfo.alertBody = "New session logged on your Watch"
         notificationInfo.soundName = "default"
-        notificationInfo.shouldBadge = true
         
-        // This tells CloudKit to only send a notification when the 'CD_endTime' field changes.
-        // This is key to only firing when a session is *completed*.
-        notificationInfo.desiredKeys = ["CD_endTime"]
+        // Category to support incrementing badge
+        notificationInfo.category = "NEW_SESSION"
         
         subscription.notificationInfo = notificationInfo
         
@@ -74,9 +75,58 @@ class SubscriptionManager {
             }
             if granted {
                 print("✅ Notification permission granted.")
+                // Register notification categories
+                self.setupNotificationCategories()
             } else {
                 print("⚠️ Notification permission denied.")
             }
         }
+    }
+    
+    private func setupNotificationCategories() {
+        let category = UNNotificationCategory(
+            identifier: "NEW_SESSION",
+            actions: [],
+            intentIdentifiers: [],
+            options: []
+        )
+        
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+    
+    // MARK: - Badge Management
+    
+    func updateBadgeForNewSession() {
+        #if os(iOS)
+        let currentCount = UserDefaults.standard.integer(forKey: badgeCountKey)
+        let newCount = currentCount + 1
+        UserDefaults.standard.set(newCount, forKey: badgeCountKey)
+        
+        UNUserNotificationCenter.current().setBadgeCount(newCount) { error in
+            if let error = error {
+                print("❌ Failed to increment badge: \(error.localizedDescription)")
+            } else {
+                print("✅ Badge incremented to \(newCount) for new session")
+            }
+        }
+        #endif
+    }
+    
+    func clearBadge() {
+        #if os(iOS)
+        UserDefaults.standard.set(0, forKey: badgeCountKey)
+        UNUserNotificationCenter.current().setBadgeCount(0) { error in
+            if let error = error {
+                print("❌ Failed to clear badge: \(error.localizedDescription)")
+            } else {
+                print("✅ Badge cleared")
+            }
+        }
+        #endif
+    }
+    
+    func markHistoryViewed() {
+        UserDefaults.standard.set(Date(), forKey: lastViewedKey)
+        clearBadge()
     }
 }
