@@ -7,11 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \PeeSession.startTime, order: .reverse) private var sessions: [PeeSession]
     @StateObject private var store: SessionStore
+    @State private var lastSessionCount = 0
     
     init() {
         let context = ModelContext(ModelContainer.shared)
@@ -43,6 +45,32 @@ struct ContentView: View {
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+        }
+        .onAppear {
+            lastSessionCount = sessions.count
+        }
+        .onChange(of: sessions.count) { oldCount, newCount in
+            // If sessions increased, update badge
+            if newCount > lastSessionCount {
+                let newSessions = newCount - lastSessionCount
+                updateBadge(increment: newSessions)
+            }
+            lastSessionCount = newCount
+        }
+    }
+    
+    private func updateBadge(increment: Int) {
+        let badgeCountKey = "appBadgeCount"
+        let currentBadge = UserDefaults.standard.integer(forKey: badgeCountKey)
+        let newBadge = currentBadge + increment
+        UserDefaults.standard.set(newBadge, forKey: badgeCountKey)
+        
+        UNUserNotificationCenter.current().setBadgeCount(newBadge) { error in
+            if let error = error {
+                print("❌ Failed to update badge: \(error.localizedDescription)")
+            } else {
+                print("✅ Badge updated: +\(increment) = \(newBadge)")
+            }
         }
     }
 }

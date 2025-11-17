@@ -219,7 +219,7 @@ class HealthInsightsEngine {
     private static func analyzeTrends(sessions: [PeeSession]) -> [HealthInsight] {
         var insights: [HealthInsight] = []
         
-        let weekTrend = AnalyticsEngine.detectFrequencyTrend(sessions: sessions, period: .week)
+        // Analyze monthly trends (weekly trend reserved for future use)
         let monthTrend = AnalyticsEngine.detectFrequencyTrend(sessions: sessions, period: .month)
         
         switch monthTrend {
@@ -266,7 +266,6 @@ class HealthInsightsEngine {
     // MARK: - Doctor Visit Summary
     
     static func generateDoctorSummary(sessions: [PeeSession], period: TrendPeriod = .month) -> String {
-        let calendar = Calendar.current
         let now = Date()
         let startDate = period.startDate(from: now)
         

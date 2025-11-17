@@ -251,8 +251,8 @@ struct SessionEndDetailView: View {
                     HStack {
                         Text("Duration")
                         Spacer()
-                        if let start = session.startTime {
-                            Text(formatDuration(Date().timeIntervalSince(start)))
+                        if let duration = session.duration {
+                            Text(formatDuration(duration))
                                 .foregroundStyle(.secondary)
                         }
                     }

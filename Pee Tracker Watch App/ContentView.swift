@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import Combine
+import WatchKit
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -99,6 +100,9 @@ struct ActiveSessionView: View {
     @Binding var showingSessionEnd: Bool
     @State private var elapsedTime: TimeInterval = 0
     @State private var timerCancellable: AnyCancellable?
+    @State private var hasShownTwoMinuteReminder = false
+    @State private var extendedRuntimeSession: WKExtendedRuntimeSession?
+    @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
         VStack(spacing: 16) {
@@ -113,6 +117,7 @@ struct ActiveSessionView: View {
             
             Button(action: {
                 stopTimer()
+                endExtendedRuntimeSession()
                 
                 // End the session NOW to capture accurate duration
                 // (before showing the detail view)
@@ -129,9 +134,17 @@ struct ActiveSessionView: View {
         .padding()
         .onAppear {
             startTimer()
+            startExtendedRuntimeSession()
         }
         .onDisappear {
             stopTimer()
+            endExtendedRuntimeSession()
+        }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            // Re-start extended runtime if app comes back to foreground
+            if newPhase == .active && store.currentSession != nil && extendedRuntimeSession == nil {
+                startExtendedRuntimeSession()
+            }
         }
     }
     
@@ -141,6 +154,12 @@ struct ActiveSessionView: View {
             .sink { _ in
                 if !showingSessionEnd, let start = session.startTime {
                     elapsedTime = Date().timeIntervalSince(start)
+                    
+                    // Check if 2 minutes have passed and we haven't reminded yet
+                    if elapsedTime >= 120 && !hasShownTwoMinuteReminder {
+                        hasShownTwoMinuteReminder = true
+                        triggerTwoMinuteReminder()
+                    }
                 }
             }
     }
@@ -148,6 +167,35 @@ struct ActiveSessionView: View {
     private func stopTimer() {
         timerCancellable?.cancel()
         timerCancellable = nil
+    }
+    
+    private func triggerTwoMinuteReminder() {
+        // Haptic feedback - notification style (3 taps)
+        WKInterfaceDevice.current().play(.notification)
+        
+        print("⏰ 2-minute reminder: Session still active")
+    }
+    
+    private func startExtendedRuntimeSession() {
+        #if os(watchOS)
+        guard extendedRuntimeSession == nil else { return }
+        
+        let session = WKExtendedRuntimeSession()
+        extendedRuntimeSession = session
+        
+        // Set up delegate if needed for more advanced handling
+        session.start()
+        
+        print("✅ Extended runtime session started - screen will stay on like Workout app")
+        #endif
+    }
+    
+    private func endExtendedRuntimeSession() {
+        #if os(watchOS)
+        extendedRuntimeSession?.invalidate()
+        extendedRuntimeSession = nil
+        print("⏹️ Extended runtime session ended")
+        #endif
     }
     
     private func formatTime(_ time: TimeInterval) -> String {

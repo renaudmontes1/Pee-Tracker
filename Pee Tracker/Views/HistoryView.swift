@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 struct HistoryView: View {
     let sessions: [PeeSession]
@@ -83,6 +84,10 @@ struct HistoryView: View {
             }
             .sheet(item: $selectedSession) { session in
                 SessionDetailView(session: session)
+            }
+            .onAppear {
+                // Clear badge when user views history
+                SubscriptionManager.shared.markHistoryViewed()
             }
         }
     }

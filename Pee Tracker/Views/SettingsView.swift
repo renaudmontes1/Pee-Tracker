@@ -299,7 +299,7 @@ struct PrivacyPolicyView: View {
                 
                 PolicySection(
                     title: "HIPAA Compliance",
-                    content: "While this app helps you track health information, it is designed for personal use. For HIPAA-compliant medical record keeping, consult your healthcare provider."
+                    content: "While this app helps you track health information, it is designed for personal use."
                 )
                 
                 PolicySection(

@@ -40,7 +40,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		849146412EB327F40043FF4C /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */ = {
+		8492E9522EC5B0110096B72E /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Models/PeeSession.swift,
@@ -56,7 +56,7 @@
 		849FFF262EAFD5C40044F628 /* Pee Tracker */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				849146412EB327F40043FF4C /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */,
+				8492E9522EC5B0110096B72E /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */,
 			);
 			path = "Pee Tracker";
 			sourceTree = "<group>";
