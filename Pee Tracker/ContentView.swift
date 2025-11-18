@@ -11,31 +11,39 @@ import UserNotifications
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \PeeSession.startTime, order: .reverse) private var sessions: [PeeSession]
-    @StateObject private var store: SessionStore
+    @Query(
+        filter: #Predicate<PeeSession> { session in
+            session.endTime != nil
+        },
+        sort: \PeeSession.startTime,
+        order: .reverse
+    ) private var sessions: [PeeSession]
+    @State private var store: SessionStore?
     @State private var lastSessionCount = 0
     
-    init() {
-        let context = ModelContext(ModelContainer.shared)
-        _store = StateObject(wrappedValue: SessionStore(modelContext: context, platformName: "iPhone"))
+    // Limit data for performance - only show recent sessions
+    var recentSessions: [PeeSession] {
+        Array(sessions.prefix(200))
     }
     
     var body: some View {
         TabView {
             // Logging Tab
-            LoggingView(store: store)
-                .tabItem {
-                    Label("Log", systemImage: "drop.fill")
-                }
+            if let store = store {
+                LoggingView(store: store)
+                    .tabItem {
+                        Label("Log", systemImage: "drop.fill")
+                    }
+            }
             
             // History Tab
-            HistoryView(sessions: sessions)
+            HistoryView(sessions: recentSessions)
                 .tabItem {
                     Label("History", systemImage: "list.bullet")
                 }
             
             // Insights Tab
-            InsightsView(sessions: sessions)
+            InsightsView(sessions: recentSessions)
                 .tabItem {
                     Label("Insights", systemImage: "chart.line.uptrend.xyaxis")
                 }
@@ -47,6 +55,10 @@ struct ContentView: View {
                 }
         }
         .onAppear {
+            // Initialize store lazily to avoid init-time memory spike
+            if store == nil {
+                store = SessionStore(modelContext: modelContext, platformName: "iPhone")
+            }
             lastSessionCount = sessions.count
         }
         .onChange(of: sessions.count) { oldCount, newCount in

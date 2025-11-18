@@ -10,11 +10,18 @@ import SwiftData
 
 struct WatchHistoryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \PeeSession.endTime, order: .reverse) private var sessions: [PeeSession]
+    @Query(
+        filter: #Predicate<PeeSession> { session in
+            session.endTime != nil
+        },
+        sort: \PeeSession.endTime,
+        order: .reverse
+    ) private var sessions: [PeeSession]
     @State private var refreshID = UUID()
     
     var completedSessions: [PeeSession] {
-        sessions.filter { $0.endTime != nil }
+        // Limit to 50 most recent sessions on Watch to save memory
+        Array(sessions.prefix(50))
     }
     
     var body: some View {

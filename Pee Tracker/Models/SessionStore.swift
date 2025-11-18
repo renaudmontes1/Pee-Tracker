@@ -89,10 +89,13 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func fetchSessions(from startDate: Date? = nil, to endDate: Date? = nil) -> [PeeSession] {
+    func fetchSessions(from startDate: Date? = nil, to endDate: Date? = nil, limit: Int = 500) -> [PeeSession] {
         var descriptor = FetchDescriptor<PeeSession>(
             sortBy: [SortDescriptor(\.startTime, order: .reverse)]
         )
+        
+        // Add fetch limit to prevent memory issues
+        descriptor.fetchLimit = limit
         
         if let startDate = startDate, let endDate = endDate {
             descriptor.predicate = #Predicate<PeeSession> { session in
