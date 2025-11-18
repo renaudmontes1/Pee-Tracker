@@ -87,7 +87,7 @@ A comprehensive health tracking app for iOS and watchOS that helps men monitor u
 - ✅ No third-party access
 - ✅ Privacy policy
 - ✅ Complete data deletion option
-- ✅ HIPAA-aware design
+- ✅ Privacy-focused design
 
 ## Technical Architecture
 
@@ -169,7 +169,7 @@ User Action → SessionStore → SwiftData → CloudKit
 - No third-party data sharing
 - User controls all exports
 - Can delete all data anytime
-- HIPAA-aware implementation (for personal use)
+- Privacy-first implementation for personal use
 
 ### Disclaimers
 - Health disclaimer in insights

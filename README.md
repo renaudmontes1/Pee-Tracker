@@ -93,7 +93,7 @@ Health Recommendations:
 - **Local-First Storage**: All data stored on your device
 - **iCloud Sync**: End-to-end encrypted sync via CloudKit
 - **No Third-Party Access**: Your data is never shared
-- **Privacy-Focused Design**: HIPAA-aware implementation
+- **Privacy-Focused Design**: Your data stays private and secure
 - **Data Control**: Export and delete all data anytime
 
 ## Technical Details

@@ -102,7 +102,7 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    Link(destination: URL(string: "https://example.com/support")!) {
+                    Link(destination: URL(string: "https://www.claivel.com/pee-tracker/")!) {
                         Label("Support", systemImage: "questionmark.circle")
                     }
                 } header: {
@@ -295,11 +295,6 @@ struct PrivacyPolicyView: View {
                 PolicySection(
                     title: "CloudKit Sync",
                     content: "Data syncs between your devices using Apple's CloudKit framework with end-to-end encryption."
-                )
-                
-                PolicySection(
-                    title: "HIPAA Compliance",
-                    content: "While this app helps you track health information, it is designed for personal use."
                 )
                 
                 PolicySection(
