@@ -70,17 +70,89 @@ enum SessionFeeling: String, Codable, CaseIterable {
 }
 
 enum Symptom: String, Codable, CaseIterable {
-    case notFullyEmpty = "Not fully empty"
-    case dripping = "Dripping"
-    case pain = "Pain"
-    case blood = "Blood"
+    case pain = "Pain/Discomfort"
+    case burning = "Burning sensation"
+    case hesitancy = "Difficulty starting"
+    case weakStream = "Weak stream"
+    case incomplete = "Incomplete emptying"
+    case urgency = "Frequent urges"
+    case blood = "Blood present"
+    
+    // Custom decoder to handle legacy symptom names from CloudKit
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        
+        // Map legacy symptom names to new ones
+        switch rawValue {
+        // Legacy mappings (v1.0)
+        case "Not fully empty":
+            self = .incomplete
+        case "Dripping":
+            self = .weakStream
+        case "Pain":
+            self = .pain
+        case "Blood":
+            self = .blood
+            
+        // v1.1 symptom names
+        case "Pain/Discomfort":
+            self = .pain
+        case "Burning sensation":
+            self = .burning
+        case "Difficulty starting":
+            self = .hesitancy
+        case "Weak stream/Dripping":
+            self = .weakStream
+        case "Incomplete emptying":
+            self = .incomplete
+        case "Frequent urges":
+            self = .urgency
+        case "Blood present":
+            self = .blood
+            
+        // v1.2 symptom names (current)
+        case "Weak stream":
+            self = .weakStream
+            
+        default:
+            throw DecodingError.dataCorrupted(
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Cannot initialize Symptom from unknown value: \(rawValue)"
+                )
+            )
+        }
+    }
     
     var icon: String {
         switch self {
-        case .notFullyEmpty: return "🚽"
-        case .dripping: return "💧"
         case .pain: return "⚡️"
+        case .burning: return "🔥"
+        case .hesitancy: return "⏸️"
+        case .weakStream: return "💧"
+        case .incomplete: return "🚽"
+        case .urgency: return "⏰"
         case .blood: return "🩸"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .pain:
+            return "Any pain or discomfort during urination"
+        case .burning:
+            return "Burning or stinging sensation while urinating"
+        case .hesitancy:
+            return "Trouble initiating urine flow"
+        case .weakStream:
+            return "Weak or slow urine stream"
+        case .incomplete:
+            return "Feeling that bladder isn't fully empty"
+        case .urgency:
+            return "Sudden, urgent need to urinate"
+        case .blood:
+            return "Visible blood in urine (hematuria)"
         }
     }
 }

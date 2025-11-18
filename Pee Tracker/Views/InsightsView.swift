@@ -659,7 +659,7 @@ enum ChartTimeframe: String, CaseIterable {
             endTime: Date().addingTimeInterval(TimeInterval(-i * 3600 * 6 + 60)),
             duration: 60,
             feeling: i % 3 == 0 ? .negative : .positive,
-            symptoms: i % 3 == 0 ? [.pain, .dripping] : []
+            symptoms: i % 3 == 0 ? [.pain, .weakStream, .urgency] : []
         )
         context.insert(session)
     }

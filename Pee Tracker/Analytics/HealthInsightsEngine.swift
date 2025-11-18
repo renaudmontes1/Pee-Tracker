@@ -116,7 +116,7 @@ class HealthInsightsEngine {
         }
         
         // Incomplete emptying pattern
-        if let emptyCount = symptomCounts.first(where: { $0.0 == .notFullyEmpty })?.1, emptyCount >= 5 {
+        if let emptyCount = symptomCounts.first(where: { $0.0 == .incomplete })?.1, emptyCount >= 5 {
             let percentage = Double(emptyCount) / Double(recentSessions.count) * 100
             insights.append(HealthInsight(
                 title: "Incomplete Bladder Emptying",
@@ -127,13 +127,47 @@ class HealthInsightsEngine {
             ))
         }
         
-        // Dripping pattern
-        if let dripCount = symptomCounts.first(where: { $0.0 == .dripping })?.1, dripCount >= 5 {
+        // Weak stream pattern
+        if let weakStreamCount = symptomCounts.first(where: { $0.0 == .weakStream })?.1, weakStreamCount >= 5 {
             insights.append(HealthInsight(
-                title: "Post-Void Dripping",
-                description: "You've experienced dripping after \(dripCount) sessions recently.",
+                title: "Weak Urine Stream",
+                description: "You've experienced weak stream in \(weakStreamCount) sessions recently.",
                 recommendation: "This is common with age or prostate enlargement. Try double voiding (urinate, wait a moment, then try again) and consider pelvic floor strengthening.",
-                priority: .low,
+                priority: .medium,
+                category: .symptoms
+            ))
+        }
+        
+        // Burning sensation pattern
+        if let burningCount = symptomCounts.first(where: { $0.0 == .burning })?.1, burningCount >= 3 {
+            insights.append(HealthInsight(
+                title: "Burning Sensation",
+                description: "You've experienced burning while urinating in \(burningCount) recent sessions.",
+                recommendation: "Burning sensation often indicates urinary tract infection (UTI) or inflammation. Increase water intake and consult a healthcare provider if symptoms persist.",
+                priority: .high,
+                category: .symptoms
+            ))
+        }
+        
+        // Hesitancy pattern
+        if let hesitancyCount = symptomCounts.first(where: { $0.0 == .hesitancy })?.1, hesitancyCount >= 5 {
+            insights.append(HealthInsight(
+                title: "Difficulty Initiating Flow",
+                description: "You've had trouble starting urination in \(hesitancyCount) sessions.",
+                recommendation: "Hesitancy can be related to prostate issues or pelvic floor tension. Relaxation techniques and medical evaluation may help.",
+                priority: .medium,
+                category: .symptoms
+            ))
+        }
+        
+        // Urgency pattern
+        if let urgencyCount = symptomCounts.first(where: { $0.0 == .urgency })?.1, urgencyCount >= 7 {
+            let percentage = Double(urgencyCount) / Double(recentSessions.count) * 100
+            insights.append(HealthInsight(
+                title: "Frequent Urgent Urges",
+                description: "You've experienced urgent needs to urinate in \(String(format: "%.0f%%", percentage)) of sessions.",
+                recommendation: "Urgency can indicate overactive bladder. Bladder training exercises, reducing caffeine/alcohol, and medical consultation may help.",
+                priority: .high,
                 category: .symptoms
             ))
         }
@@ -206,7 +240,7 @@ class HealthInsightsEngine {
                 title: "Uneven Hydration Pattern",
                 description: "Most of your sessions occur during \(maxCluster.key.rawValue.lowercased()).",
                 recommendation: "Try to distribute your fluid intake more evenly throughout the day for better bladder health.",
-                priority: .low,
+                priority: .medium,
                 category: .patterns
             ))
         }

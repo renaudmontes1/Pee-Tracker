@@ -217,7 +217,7 @@ private extension InsightCard {
             endTime: Date().addingTimeInterval(TimeInterval(-i * 3600 * 6 + 60)),
             duration: 60,
             feeling: i % 4 == 0 ? .negative : .positive,
-            symptoms: i % 4 == 0 ? [.pain, .dripping] : [],
+            symptoms: i % 4 == 0 ? [.pain, .weakStream, .burning] : [],
             notes: i % 5 == 0 ? "Feeling different today" : ""
         )
         context.insert(session)

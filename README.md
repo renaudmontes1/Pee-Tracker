@@ -7,21 +7,35 @@ A comprehensive iOS and watchOS app designed to help men monitor their urination
 ### 🕰 Apple Watch App
 The Watch app provides quick, friction-free logging:
 - **One-tap Start/Stop**: Begin and end sessions with a single tap
-- **Session Timer**: Real-time duration tracking
+- **Session Timer**: Real-time duration tracking with workout-style always-on display
 - **Feeling Toggle**: Mark sessions as ✅ Positive or ❌ Negative
-- **Conditional Symptoms**: When negative, select from:
-  - 🚽 Not fully empty
-  - 💧 Dripping
-  - ⚡️ Pain
-  - 🩸 Blood
+- **Comprehensive Symptom Tracking**: When negative, select from:
+  - ⚡️ Pain/Discomfort
+  - 🔥 Burning sensation
+  - ⏸️ Difficulty starting
+  - 💧 Weak stream/Dripping
+  - 🚽 Incomplete emptying
+  - ⏰ Frequent urges
+  - 🩸 Blood present
+- **2-Minute Reminder**: Gentle haptic reminder if session exceeds 2 minutes
+- **History View**: Review past sessions directly on your wrist
 
 ### 📱 iPhone App
 The iPhone app offers comprehensive tracking and analysis:
 
 #### Logging Features
-- All Watch functionality plus enhanced UI
+- All Watch functionality with expanded symptom tracking
+- **Enhanced Symptom Selection**: Seven comprehensive urinary symptoms:
+  - ⚡️ Pain/Discomfort - Any pain or discomfort during urination
+  - 🔥 Burning sensation - Burning or stinging while urinating
+  - ⏸️ Difficulty starting - Trouble initiating urine flow
+  - 💧 Weak stream/Dripping - Weak, slow, or dripping stream
+  - 🚽 Incomplete emptying - Feeling bladder isn't fully empty
+  - ⏰ Frequent urges - Sudden, urgent need to urinate
+  - 🩸 Blood present - Visible blood in urine (hematuria)
 - **Session Notes**: Add freeform text for context (medications, activities, observations)
 - **Manual Duration Entry**: Complete session details
+- **Smart Badge Notifications**: App icon badge shows unread sessions synced from Watch
 
 #### History & Review
 - **Searchable History**: Find sessions by notes or symptoms
@@ -48,23 +62,25 @@ The iPhone app offers comprehensive tracking and analysis:
 
 **Health Insights:**
 The app analyzes your data to detect:
-- ⚠️ **Critical Issues**: Blood in urine, severe symptoms requiring immediate attention
-- 🔴 **High Priority**: Recurring pain, worsening symptoms, significant frequency changes
-- 🟡 **Medium Priority**: Incomplete emptying patterns, nocturia (nighttime urination)
-- 🟢 **Positive Insights**: Healthy patterns, stable trends
+- ⚠️ **Critical Issues**: Blood in urine, severe symptoms requiring immediate medical attention
+- 🔴 **High Priority**: Recurring pain/burning, worsening symptoms, significant frequency changes
+- 🟡 **Medium Priority**: Incomplete emptying patterns, difficulty starting, nocturia (nighttime urination)
+- 🟢 **Positive Insights**: Healthy patterns, stable trends, low symptom frequency
 
 Pattern Detection:
-- Frequency changes over time
-- Symptom severity trends
-- Hydration indicators
-- Time-of-day clustering
+- Frequency changes over time (daily, weekly, monthly trends)
+- Symptom severity and recurrence tracking
+- Hydration pattern indicators
+- Time-of-day clustering analysis
 - Correlation with lifestyle changes
+- Urgency pattern recognition
 
 Health Recommendations:
-- Hydration adjustments
-- Behavioral modifications
-- When to seek medical attention
-- Lifestyle tips based on patterns
+- Hydration adjustments based on frequency
+- Behavioral modifications for symptom management
+- When to seek immediate medical attention
+- Lifestyle tips based on detected patterns
+- Pelvic floor health suggestions
 
 #### Data Export
 - **Doctor Visit Summary**: Generate comprehensive reports for medical consultations

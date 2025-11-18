@@ -377,7 +377,7 @@ struct FilterView: View {
         endTime: Date().addingTimeInterval(-7140),
         duration: 60,
         feeling: .negative,
-        symptoms: [.pain, .dripping],
+        symptoms: [.pain, .weakStream, .burning],
         notes: "Some discomfort"
     )
     

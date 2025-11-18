@@ -42,9 +42,18 @@ Pee Tracker Watch App/
 ### 2. Apple Watch App
 
 **Features:**
-- Start/Stop button with timer
+- Start/Stop button with timer and workout-style always-on display
 - Feeling selection (Positive/Negative)
-- Conditional symptom checkboxes
+- Comprehensive symptom tracking (7 symptoms):
+  - ⚡️ Pain/Discomfort
+  - 🔥 Burning sensation
+  - ⏸️ Difficulty starting
+  - 💧 Weak stream/Dripping
+  - 🚽 Incomplete emptying
+  - ⏰ Frequent urges
+  - 🩸 Blood present
+- 2-minute haptic reminder for long sessions
+- Session history view on wrist
 - Real-time elapsed time display
 - Haptic feedback on actions
 
