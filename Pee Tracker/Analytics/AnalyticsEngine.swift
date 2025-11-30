@@ -264,11 +264,11 @@ enum TrendPeriod {
         let calendar = Calendar.current
         switch self {
         case .week:
-            return calendar.date(byAdding: .day, value: -7, to: date)!
+            return calendar.date(byAdding: .day, value: -7, to: date) ?? date
         case .month:
-            return calendar.date(byAdding: .month, value: -1, to: date)!
+            return calendar.date(byAdding: .month, value: -1, to: date) ?? date
         case .threeMonths:
-            return calendar.date(byAdding: .month, value: -3, to: date)!
+            return calendar.date(byAdding: .month, value: -3, to: date) ?? date
         }
     }
     
@@ -276,11 +276,11 @@ enum TrendPeriod {
         let calendar = Calendar.current
         switch self {
         case .week:
-            return calendar.date(byAdding: .day, value: -7, to: currentStart)!
+            return calendar.date(byAdding: .day, value: -7, to: currentStart) ?? currentStart
         case .month:
-            return calendar.date(byAdding: .month, value: -1, to: currentStart)!
+            return calendar.date(byAdding: .month, value: -1, to: currentStart) ?? currentStart
         case .threeMonths:
-            return calendar.date(byAdding: .month, value: -3, to: currentStart)!
+            return calendar.date(byAdding: .month, value: -3, to: currentStart) ?? currentStart
         }
     }
 }

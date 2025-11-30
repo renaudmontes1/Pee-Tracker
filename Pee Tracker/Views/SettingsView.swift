@@ -17,7 +17,7 @@ struct SettingsView: View {
 #if !os(watchOS)
     @State private var showingExportSheet = false
     @State private var showingDoctorSummary = false
-    @State private var exportFormat: ExportFormat = .pdf
+    @State private var exportFormat: ExportFormat = .csv
     @State private var exportPeriod: TrendPeriod = .month
 #endif
     
@@ -129,8 +129,9 @@ struct ExportDataView: View {
     @Binding var isPresented: Bool
     @State private var exportFormat: ExportFormat = .csv
     @State private var exportPeriod: TrendPeriod = .month
-    @State private var showingShareSheet = false
     @State private var exportURL: URL?
+    @State private var showingNoDataAlert = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -174,15 +175,18 @@ struct ExportDataView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        isPresented = false
+                        dismiss()
                     }
                 }
             }
-            .sheet(isPresented: $showingShareSheet) {
-                if let url = exportURL {
-                    ShareSheet(items: [url])
-                }
+            .alert("No Data to Export", isPresented: $showingNoDataAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("There are no completed sessions in the selected time period.")
             }
+        }
+        .onAppear {
+            print("📱 ExportDataView appeared with \(sessions.count) sessions")
         }
     }
     
@@ -195,22 +199,55 @@ struct ExportDataView: View {
             return endTime >= startDate && endTime <= now
         }
         
-        switch exportFormat {
-        case .csv:
-            exportURL = ExportEngine.exportToCSV(sessions: filteredSessions)
-        case .pdf:
-            exportURL = ExportEngine.exportToPDF(sessions: filteredSessions, period: exportPeriod)
+        print("📊 Exporting \(filteredSessions.count) sessions in \(exportFormat.rawValue) format")
+        
+        // Check if there's data to export
+        guard !filteredSessions.isEmpty else {
+            print("⚠️ No sessions to export in selected period")
+            showingNoDataAlert = true
+            return
         }
         
-        if exportURL != nil {
-            showingShareSheet = true
+        var url: URL?
+        switch exportFormat {
+        case .csv:
+            url = ExportEngine.exportToCSV(sessions: filteredSessions)
+        case .txt:
+            url = ExportEngine.exportToTXT(sessions: filteredSessions, period: exportPeriod)
+        }
+        
+        if let exportURL = url {
+            print("✅ Export successful: \(exportURL.lastPathComponent)")
+            // Use UIActivityViewController directly
+            let activityVC = UIActivityViewController(activityItems: [exportURL], applicationActivities: nil)
+            
+            // Get the window scene to present from
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let rootVC = windowScene.windows.first?.rootViewController {
+                // Find the topmost presented view controller
+                var topVC = rootVC
+                while let presented = topVC.presentedViewController {
+                    topVC = presented
+                }
+                
+                // For iPad - set popover presentation
+                if let popover = activityVC.popoverPresentationController {
+                    popover.sourceView = topVC.view
+                    popover.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
+                    popover.permittedArrowDirections = []
+                }
+                
+                topVC.present(activityVC, animated: true)
+            }
+        } else {
+            print("❌ Export failed - no URL generated")
         }
     }
 }
 
 enum ExportFormat: String, CaseIterable {
     case csv = "CSV"
-    case pdf = "PDF"
+    case txt = "Text Summary"
 }
 
 // MARK: - Doctor Summary View
@@ -387,8 +424,15 @@ class ExportEngine {
                 return // Skip incomplete sessions
             }
             
-            let date = startTime.formatted(date: .numeric, time: .omitted)
-            let time = startTime.formatted(date: .omitted, time: .shortened)
+            // Use custom formatters to avoid special characters
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM/dd/yyyy"
+            let date = dateFormatter.string(from: startTime)
+            
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "h:mm a"
+            let time = timeFormatter.string(from: startTime)
+            
             let durationInt = Int(duration)
             let feelingStr = feeling.rawValue
             let symptoms = (session.symptoms ?? []).map { $0.rawValue }.joined(separator: "; ")
@@ -397,30 +441,39 @@ class ExportEngine {
             csvString += "\"\(date)\",\"\(time)\",\(durationInt),\"\(feelingStr)\",\"\(symptoms)\",\"\(notes)\"\n"
         }
         
-        let fileName = "PeeTracker_Export_\(Date().formatted(date: .numeric, time: .omitted)).csv"
+        // Use safe date format for filename (no slashes)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HHmm"
+        let timestamp = dateFormatter.string(from: Date())
+        let fileName = "PeeTracker_Export_\(timestamp).csv"
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {
             try csvString.write(to: tempURL, atomically: true, encoding: .utf8)
+            print("✅ CSV exported to: \(tempURL.path)")
             return tempURL
         } catch {
-            print("Error exporting CSV: \(error)")
+            print("❌ Error exporting CSV: \(error.localizedDescription)")
             return nil
         }
     }
     
-    static func exportToPDF(sessions: [PeeSession], period: TrendPeriod) -> URL? {
-        // For simplicity, we'll create a text-based PDF
-        // In production, you'd use PDFKit for proper formatting
+    static func exportToTXT(sessions: [PeeSession], period: TrendPeriod) -> URL? {
         let summary = HealthInsightsEngine.generateDoctorSummary(sessions: sessions, period: period)
-        let fileName = "PeeTracker_Summary_\(Date().formatted(date: .numeric, time: .omitted)).txt"
+        
+        // Use safe date format for filename (no slashes)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HHmm"
+        let timestamp = dateFormatter.string(from: Date())
+        let fileName = "PeeTracker_Summary_\(timestamp).txt"
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {
             try summary.write(to: tempURL, atomically: true, encoding: .utf8)
+            print("✅ Summary exported to: \(tempURL.path)")
             return tempURL
         } catch {
-            print("Error exporting PDF: \(error)")
+            print("❌ Error exporting summary: \(error.localizedDescription)")
             return nil
         }
     }
