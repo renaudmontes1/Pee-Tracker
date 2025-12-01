@@ -161,8 +161,8 @@ The insights are based on general patterns and should not replace professional m
 
 ## Requirements
 
-- iOS 17.0 or later
-- watchOS 10.0 or later
+- iOS 18.6 or later
+- watchOS 11.6 or later
 - iCloud account (for sync between devices)
 
 ## Privacy Policy
