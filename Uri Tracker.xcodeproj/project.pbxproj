@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		849FFF322EAFD5C90044F628 /* Pee Tracker Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 849FFF312EAFD5C90044F628 /* Pee Tracker Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		849FFF322EAFD5C90044F628 /* Uri Tracker Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 849FFF312EAFD5C90044F628 /* Uri Tracker Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -16,7 +16,7 @@
 			containerPortal = 849FFF1C2EAFD5C30044F628 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 849FFF302EAFD5C90044F628;
-			remoteInfo = "Pee Tracker Watch App";
+			remoteInfo = "Uri Tracker Watch App";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -27,7 +27,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				849FFF322EAFD5C90044F628 /* Pee Tracker Watch App.app in Embed Watch Content */,
+				849FFF322EAFD5C90044F628 /* Uri Tracker Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -35,12 +35,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		849FFF242EAFD5C40044F628 /* Pee Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pee Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		849FFF312EAFD5C90044F628 /* Pee Tracker Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pee Tracker Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		849FFF242EAFD5C40044F628 /* Uri Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Uri Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		849FFF312EAFD5C90044F628 /* Uri Tracker Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Uri Tracker Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8492E9522EC5B0110096B72E /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */ = {
+		8459CA762EDD5A880001B17D /* Exceptions for "Uri Tracker" folder in "Uri Tracker Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Models/PeeSession.swift,
@@ -48,27 +48,22 @@
 				Models/SubscriptionManager.swift,
 				Models/SyncMonitor.swift,
 			);
-			target = 849FFF302EAFD5C90044F628 /* Pee Tracker Watch App */;
+			target = 849FFF302EAFD5C90044F628 /* Uri Tracker Watch App */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		849FFF262EAFD5C40044F628 /* Pee Tracker */ = {
+		849FFF262EAFD5C40044F628 /* Uri Tracker */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				8492E9522EC5B0110096B72E /* Exceptions for "Pee Tracker" folder in "Pee Tracker Watch App" target */,
+				8459CA762EDD5A880001B17D /* Exceptions for "Uri Tracker" folder in "Uri Tracker Watch App" target */,
 			);
-			path = "Pee Tracker";
+			path = "Uri Tracker";
 			sourceTree = "<group>";
 		};
-		849FFF352EAFD5C90044F628 /* Pee Tracker Watch App */ = {
+		849FFF352EAFD5C90044F628 /* Uri Tracker Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Pee Tracker Watch App";
-			sourceTree = "<group>";
-		};
-		849FFF452EAFD9A00044F628 /* Pee Tracker/Models */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Pee Tracker/Models";
+			path = "Uri Tracker Watch App";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -94,9 +89,8 @@
 		849FFF1B2EAFD5C30044F628 = {
 			isa = PBXGroup;
 			children = (
-				849FFF262EAFD5C40044F628 /* Pee Tracker */,
-				849FFF352EAFD5C90044F628 /* Pee Tracker Watch App */,
-				849FFF452EAFD9A00044F628 /* Pee Tracker/Models */,
+				849FFF262EAFD5C40044F628 /* Uri Tracker */,
+				849FFF352EAFD5C90044F628 /* Uri Tracker Watch App */,
 				849FFF252EAFD5C40044F628 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,8 +98,8 @@
 		849FFF252EAFD5C40044F628 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				849FFF242EAFD5C40044F628 /* Pee Tracker.app */,
-				849FFF312EAFD5C90044F628 /* Pee Tracker Watch App.app */,
+				849FFF242EAFD5C40044F628 /* Uri Tracker.app */,
+				849FFF312EAFD5C90044F628 /* Uri Tracker Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,9 +107,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		849FFF232EAFD5C40044F628 /* Pee Tracker */ = {
+		849FFF232EAFD5C40044F628 /* Uri Tracker */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 849FFF422EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Pee Tracker" */;
+			buildConfigurationList = 849FFF422EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Uri Tracker" */;
 			buildPhases = (
 				849FFF202EAFD5C40044F628 /* Sources */,
 				849FFF212EAFD5C40044F628 /* Frameworks */,
@@ -128,18 +122,18 @@
 				849FFF342EAFD5C90044F628 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				849FFF262EAFD5C40044F628 /* Pee Tracker */,
+				849FFF262EAFD5C40044F628 /* Uri Tracker */,
 			);
-			name = "Pee Tracker";
+			name = "Uri Tracker";
 			packageProductDependencies = (
 			);
-			productName = "Pee Tracker";
-			productReference = 849FFF242EAFD5C40044F628 /* Pee Tracker.app */;
+			productName = "Uri Tracker";
+			productReference = 849FFF242EAFD5C40044F628 /* Uri Tracker.app */;
 			productType = "com.apple.product-type.application";
 		};
-		849FFF302EAFD5C90044F628 /* Pee Tracker Watch App */ = {
+		849FFF302EAFD5C90044F628 /* Uri Tracker Watch App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 849FFF3E2EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Pee Tracker Watch App" */;
+			buildConfigurationList = 849FFF3E2EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Uri Tracker Watch App" */;
 			buildPhases = (
 				849FFF2D2EAFD5C90044F628 /* Sources */,
 				849FFF2E2EAFD5C90044F628 /* Frameworks */,
@@ -150,14 +144,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				849FFF352EAFD5C90044F628 /* Pee Tracker Watch App */,
-				849FFF452EAFD9A00044F628 /* Pee Tracker/Models */,
+				849FFF352EAFD5C90044F628 /* Uri Tracker Watch App */,
 			);
-			name = "Pee Tracker Watch App";
+			name = "Uri Tracker Watch App";
 			packageProductDependencies = (
 			);
-			productName = "Pee Tracker Watch App";
-			productReference = 849FFF312EAFD5C90044F628 /* Pee Tracker Watch App.app */;
+			productName = "Uri Tracker Watch App";
+			productReference = 849FFF312EAFD5C90044F628 /* Uri Tracker Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -175,10 +168,11 @@
 					};
 					849FFF302EAFD5C90044F628 = {
 						CreatedOnToolsVersion = 26.0.1;
+						LastSwiftMigration = 2600;
 					};
 				};
 			};
-			buildConfigurationList = 849FFF1F2EAFD5C30044F628 /* Build configuration list for PBXProject "Pee Tracker" */;
+			buildConfigurationList = 849FFF1F2EAFD5C30044F628 /* Build configuration list for PBXProject "Uri Tracker" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -192,8 +186,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				849FFF232EAFD5C40044F628 /* Pee Tracker */,
-				849FFF302EAFD5C90044F628 /* Pee Tracker Watch App */,
+				849FFF232EAFD5C40044F628 /* Uri Tracker */,
+				849FFF302EAFD5C90044F628 /* Uri Tracker Watch App */,
 			);
 		};
 /* End PBXProject section */
@@ -235,7 +229,7 @@
 /* Begin PBXTargetDependency section */
 		849FFF342EAFD5C90044F628 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 849FFF302EAFD5C90044F628 /* Pee Tracker Watch App */;
+			target = 849FFF302EAFD5C90044F628 /* Uri Tracker Watch App */;
 			targetProxy = 849FFF332EAFD5C90044F628 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -362,22 +356,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Pee Tracker Watch App/Pee Tracker Watch App.entitlements";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Uri Tracker Watch App/Uri Tracker Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HDTY479X59;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Pee-Tracker-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Pee Pee Tracker";
+				INFOPLIST_FILE = "Uri-Tracker-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Uri Tracker";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "rens-corp.Pee-Pee-Tracker";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "rens-corp.Uri-Tracker";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Pee-Pee-Tracker.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Uri-Tracker.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -385,6 +380,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -397,22 +393,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Pee Tracker Watch App/Pee Tracker Watch App.entitlements";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Uri Tracker Watch App/Uri Tracker Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HDTY479X59;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Pee-Tracker-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Pee Pee Tracker";
+				INFOPLIST_FILE = "Uri-Tracker-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Uri Tracker";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "rens-corp.Pee-Pee-Tracker";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "rens-corp.Uri-Tracker";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Pee-Pee-Tracker.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Uri-Tracker.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -433,14 +430,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Pee Tracker/Pee Tracker.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Uri Tracker/Uri Tracker.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HDTY479X59;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Pee-Tracker-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = UriTracker;
+				INFOPLIST_FILE = "Uri-Tracker-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Uri Tracker";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -451,7 +448,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Pee-Pee-Tracker";
+				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Uri-Tracker";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -469,14 +466,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Pee Tracker/Pee Tracker.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Uri Tracker/Uri Tracker.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HDTY479X59;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Pee-Tracker-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = UriTracker;
+				INFOPLIST_FILE = "Uri-Tracker-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Uri Tracker";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -487,7 +484,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Pee-Pee-Tracker";
+				PRODUCT_BUNDLE_IDENTIFIER = "rens-corp.Uri-Tracker";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -504,7 +501,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		849FFF1F2EAFD5C30044F628 /* Build configuration list for PBXProject "Pee Tracker" */ = {
+		849FFF1F2EAFD5C30044F628 /* Build configuration list for PBXProject "Uri Tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849FFF3C2EAFD5CC0044F628 /* Debug */,
@@ -513,7 +510,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		849FFF3E2EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Pee Tracker Watch App" */ = {
+		849FFF3E2EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Uri Tracker Watch App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849FFF3F2EAFD5CC0044F628 /* Debug */,
@@ -522,7 +519,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		849FFF422EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Pee Tracker" */ = {
+		849FFF422EAFD5CC0044F628 /* Build configuration list for PBXNativeTarget "Uri Tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				849FFF432EAFD5CC0044F628 /* Debug */,

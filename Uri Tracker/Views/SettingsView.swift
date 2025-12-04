@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  Pee Tracker
+//  Uri Tracker
 //
 //  Created by Renaud Montes on 10/27/25.
 //
@@ -102,7 +102,7 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    Link(destination: URL(string: "https://www.claivel.com/pee-tracker/")!) {
+                    Link(destination: URL(string: "https://www.claivel.com/uri-tracker/")!) {
                         Label("Support", systemImage: "questionmark.circle")
                     }
                 } header: {
@@ -336,7 +336,7 @@ struct PrivacyPolicyView: View {
                 
                 PolicySection(
                     title: "Data Sharing",
-                    content: "You control all data exports. We never automatically share your information with third parties."
+                    content: "You control all data exports. We never share your information with third parties."
                 )
             }
             .padding()

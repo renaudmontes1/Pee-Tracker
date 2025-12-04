@@ -1,6 +1,6 @@
 //
 //  LoggingView.swift
-//  Pee Tracker
+//  Uri Tracker
 //
 //  Created by Renaud Montes on 10/27/25.
 //
@@ -38,7 +38,7 @@ struct LoggingView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Pee Pee Tracker")
+            .navigationTitle("Uri Tracker")
             .sheet(isPresented: $showingSessionEnd) {
                 if let session = store.currentSession {
                     SessionEndDetailView(session: session, store: store, isPresented: $showingSessionEnd)

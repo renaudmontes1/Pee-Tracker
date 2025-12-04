@@ -1,6 +1,6 @@
 //
-//  Pee_TrackerApp.swift
-//  Pee Tracker Watch App
+//  Uri_TrackerApp.swift
+//  Uri Tracker
 //
 //  Created by Renaud Montes on 10/27/25.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct Pee_Tracker_Watch_AppApp: App {
+struct Uri_TrackerApp: App {
     
     init() {
         // Request permission for notifications

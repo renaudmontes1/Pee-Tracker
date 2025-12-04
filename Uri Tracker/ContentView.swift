@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Pee Tracker
+//  Uri Tracker
 //
 //  Created by Renaud Montes on 10/27/25.
 //
