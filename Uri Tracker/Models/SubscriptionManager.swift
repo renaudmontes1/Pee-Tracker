@@ -1,6 +1,6 @@
 //
 //  SubscriptionManager.swift
-//  Pee Tracker
+//  Uri Tracker
 //
 //  Created by GitHub Copilot on 10/29/25.
 //

@@ -1,6 +1,6 @@
 //
 //  SyncMonitor.swift
-//  Pee Tracker
+//  Uri Tracker
 //
 //  Created by GitHub Copilot on 10/27/25.
 //
