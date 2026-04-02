@@ -105,6 +105,12 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://www.claivel.com/uri-tracker/")!) {
                         Label("Support", systemImage: "questionmark.circle")
                     }
+
+                    NavigationLink {
+                        MedicalSourcesView()
+                    } label: {
+                        Label("Medical Sources", systemImage: "book")
+                    }
                 } header: {
                     Text("About")
                 }
@@ -260,6 +266,10 @@ struct DoctorSummaryView: View {
     var summary: String {
         HealthInsightsEngine.generateDoctorSummary(sessions: sessions, period: period)
     }
+
+    var citations: [MedicalCitation] {
+        HealthInsightsEngine.doctorSummaryCitations()
+    }
     
     var body: some View {
         NavigationStack {
@@ -282,6 +292,25 @@ struct DoctorSummaryView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                         .padding(.horizontal)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Clinical References")
+                            .font(.headline)
+
+                        ForEach(citations) { citation in
+                            Link(destination: citation.url) {
+                                Text(citation.title)
+                                    .font(.subheadline)
+                                    .underline()
+                                    .multilineTextAlignment(.leading)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
                     
                     // Export Button
                     Button(action: {
@@ -342,6 +371,37 @@ struct PrivacyPolicyView: View {
             .padding()
         }
         .navigationTitle("Privacy Policy")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct MedicalSourcesView: View {
+    private let sources = HealthInsightsEngine.allMedicalCitations()
+
+    var body: some View {
+        List {
+            Section {
+                Text("These clinical references support the health insights and recommendations shown in the app.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Sources") {
+                ForEach(sources) { source in
+                    Link(destination: source.url) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(source.title)
+                                .foregroundStyle(.primary)
+                            Text(source.url.absoluteString)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Medical Sources")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

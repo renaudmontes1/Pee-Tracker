@@ -8,6 +8,52 @@
 import Foundation
 
 class HealthInsightsEngine {
+    private enum CitationLibrary {
+        static let niddkUrinationBasics = MedicalCitation(
+            title: "NIDDK - Urination Basics and Changes",
+            url: URL(string: "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems")!
+        )
+
+        static let mayoFrequentUrination = MedicalCitation(
+            title: "Mayo Clinic - Frequent Urination",
+            url: URL(string: "https://www.mayoclinic.org/symptoms/frequent-urination/basics/definition/sym-20050712")!
+        )
+
+        static let cdcHydration = MedicalCitation(
+            title: "CDC - Water and Healthier Drinks",
+            url: URL(string: "https://www.cdc.gov/healthy-weight-growth/water-healthy-drinks/index.html")!
+        )
+
+        static let mayoHematuria = MedicalCitation(
+            title: "NIDDK - Hematuria (Blood in the Urine)",
+            url: URL(string: "https://www.niddk.nih.gov/health-information/urologic-diseases/hematuria-blood-urine")!
+        )
+
+        static let mayoDysuria = MedicalCitation(
+            title: "Mayo Clinic - Painful Urination (Dysuria)",
+            url: URL(string: "https://www.mayoclinic.org/symptoms/painful-urination/basics/definition/sym-20050772")!
+        )
+
+        static let niddkBph = MedicalCitation(
+            title: "NIDDK - Enlarged Prostate (BPH)",
+            url: URL(string: "https://www.niddk.nih.gov/health-information/urologic-diseases/prostate-problems/enlarged-prostate-benign-prostatic-hyperplasia")!
+        )
+
+        static let niddkBladderControl = MedicalCitation(
+            title: "NIDDK - Bladder Control Problems",
+            url: URL(string: "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems")!
+        )
+
+        static let mayoNocturia = MedicalCitation(
+            title: "Mayo Clinic - Frequent Urination at Night (Nocturia)",
+            url: URL(string: "https://www.mayoclinic.org/symptoms/frequent-urination/basics/definition/sym-20050712")!
+        )
+
+        static let urologyHealthOveractiveBladder = MedicalCitation(
+            title: "UrologyHealth - Overactive Bladder (OAB)",
+            url: URL(string: "https://www.urologyhealth.org/urology-a-z/o/overactive-bladder-(oab)")!
+        )
+    }
     
     // MARK: - Generate Insights
     
@@ -55,7 +101,8 @@ class HealthInsightsEngine {
                 description: "You're averaging \(String(format: "%.1f", avgPerDay)) sessions per day, which is higher than normal (6-8/day). This could indicate overhydration, diabetes, or urinary tract infection.",
                 recommendation: "Consider tracking your fluid intake and consult with a healthcare provider if this persists.",
                 priority: .high,
-                category: .frequency
+                category: .frequency,
+                citations: [CitationLibrary.niddkUrinationBasics, CitationLibrary.mayoFrequentUrination]
             ))
         } else if avgPerDay < 4 {
             insights.append(HealthInsight(
@@ -63,7 +110,8 @@ class HealthInsightsEngine {
                 description: "You're averaging \(String(format: "%.1f", avgPerDay)) sessions per day, which is lower than normal (6-8/day). This might suggest dehydration.",
                 recommendation: "Increase your fluid intake to 8-10 glasses of water per day and monitor for improvement.",
                 priority: .medium,
-                category: .frequency
+                category: .frequency,
+                citations: [CitationLibrary.cdcHydration, CitationLibrary.niddkUrinationBasics]
             ))
         } else if avgPerDay >= 6 && avgPerDay <= 8 {
             insights.append(HealthInsight(
@@ -71,7 +119,8 @@ class HealthInsightsEngine {
                 description: "Your urination frequency of \(String(format: "%.1f", avgPerDay)) sessions per day is within the normal range.",
                 recommendation: "Keep up your current hydration habits!",
                 priority: .low,
-                category: .frequency
+                category: .frequency,
+                citations: [CitationLibrary.cdcHydration, CitationLibrary.niddkUrinationBasics]
             ))
         }
         
@@ -100,7 +149,8 @@ class HealthInsightsEngine {
                 description: "You've reported blood in your urine \(bloodCount) time(s) in the past two weeks. This requires immediate medical attention.",
                 recommendation: "Seek medical evaluation immediately. Blood in urine (hematuria) can indicate infection, kidney stones, or other serious conditions.",
                 priority: .critical,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.mayoHematuria]
             ))
         }
         
@@ -111,7 +161,8 @@ class HealthInsightsEngine {
                 description: "You've experienced pain during \(painCount) sessions in the past two weeks.",
                 recommendation: "Persistent pain could indicate a urinary tract infection, kidney stones, or prostate issues. Schedule an appointment with your healthcare provider.",
                 priority: .high,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.mayoDysuria, CitationLibrary.niddkBph]
             ))
         }
         
@@ -123,7 +174,8 @@ class HealthInsightsEngine {
                 description: "You've reported not feeling fully empty in \(String(format: "%.0f%%", percentage)) of your sessions.",
                 recommendation: "This could indicate benign prostatic hyperplasia (BPH) or bladder dysfunction. Consider pelvic floor exercises and consult a urologist.",
                 priority: .medium,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.niddkBph, CitationLibrary.niddkBladderControl]
             ))
         }
         
@@ -134,7 +186,8 @@ class HealthInsightsEngine {
                 description: "You've experienced weak stream in \(weakStreamCount) sessions recently.",
                 recommendation: "This is common with age or prostate enlargement. Try double voiding (urinate, wait a moment, then try again) and consider pelvic floor strengthening.",
                 priority: .medium,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.niddkBph]
             ))
         }
         
@@ -145,7 +198,8 @@ class HealthInsightsEngine {
                 description: "You've experienced burning while urinating in \(burningCount) recent sessions.",
                 recommendation: "Burning sensation often indicates urinary tract infection (UTI) or inflammation. Increase water intake and consult a healthcare provider if symptoms persist.",
                 priority: .high,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.mayoDysuria, CitationLibrary.cdcHydration]
             ))
         }
         
@@ -156,7 +210,8 @@ class HealthInsightsEngine {
                 description: "You've had trouble starting urination in \(hesitancyCount) sessions.",
                 recommendation: "Hesitancy can be related to prostate issues or pelvic floor tension. Relaxation techniques and medical evaluation may help.",
                 priority: .medium,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.niddkBph, CitationLibrary.niddkBladderControl]
             ))
         }
         
@@ -168,7 +223,8 @@ class HealthInsightsEngine {
                 description: "You've experienced urgent needs to urinate in \(String(format: "%.0f%%", percentage)) of sessions.",
                 recommendation: "Urgency can indicate overactive bladder. Bladder training exercises, reducing caffeine/alcohol, and medical consultation may help.",
                 priority: .high,
-                category: .symptoms
+                category: .symptoms,
+                citations: [CitationLibrary.urologyHealthOveractiveBladder, CitationLibrary.niddkBladderControl]
             ))
         }
         
@@ -199,7 +255,8 @@ class HealthInsightsEngine {
                 description: "You're waking up an average of \(String(format: "%.1f", avgNighttimePerNight)) times per night to urinate.",
                 recommendation: "Limit fluids 2-3 hours before bedtime, avoid caffeine and alcohol in the evening, and elevate your legs in the afternoon. If persistent, consult your doctor about possible sleep apnea or heart conditions.",
                 priority: .medium,
-                category: .patterns
+                category: .patterns,
+                citations: [CitationLibrary.mayoNocturia, CitationLibrary.cdcHydration]
             ))
         }
         
@@ -228,7 +285,8 @@ class HealthInsightsEngine {
                 description: "Your sessions are averaging only \(Int(avgDuration)) seconds, which might indicate inadequate hydration or bladder irritation.",
                 recommendation: "Ensure you're drinking enough water throughout the day. Aim for clear to pale yellow urine color.",
                 priority: .low,
-                category: .hydration
+                category: .hydration,
+                citations: [CitationLibrary.cdcHydration]
             ))
         }
         
@@ -241,7 +299,8 @@ class HealthInsightsEngine {
                 description: "Most of your sessions occur during \(maxCluster.key.rawValue.lowercased()).",
                 recommendation: "Try to distribute your fluid intake more evenly throughout the day for better bladder health.",
                 priority: .medium,
-                category: .patterns
+                category: .patterns,
+                citations: [CitationLibrary.cdcHydration]
             ))
         }
         
@@ -263,7 +322,8 @@ class HealthInsightsEngine {
                 description: "Your urination frequency has increased by \(String(format: "%.0f%%", percentage)) over the past month.",
                 recommendation: "This significant increase warrants medical evaluation. Track any new medications, dietary changes, or other symptoms to discuss with your doctor.",
                 priority: .high,
-                category: .trends
+                category: .trends,
+                citations: [CitationLibrary.mayoFrequentUrination, CitationLibrary.niddkUrinationBasics]
             ))
             
         case .decreasing(let percentage) where percentage > 30:
@@ -272,7 +332,8 @@ class HealthInsightsEngine {
                 description: "Your urination frequency has decreased by \(String(format: "%.0f%%", percentage)) over the past month.",
                 recommendation: "Ensure you're maintaining adequate hydration. If accompanied by dark urine or other symptoms, consult a healthcare provider.",
                 priority: .medium,
-                category: .trends
+                category: .trends,
+                citations: [CitationLibrary.cdcHydration, CitationLibrary.niddkUrinationBasics]
             ))
             
         default:
@@ -289,7 +350,8 @@ class HealthInsightsEngine {
                     description: "Your \(symptom.rawValue.lowercased()) symptoms have increased by \(String(format: "%.0f%%", percentage)) this month.",
                     recommendation: "Schedule an appointment with your healthcare provider to evaluate this worsening symptom.",
                     priority: .high,
-                    category: .symptoms
+                    category: .symptoms,
+                    citations: [CitationLibrary.niddkBladderControl, CitationLibrary.mayoDysuria]
                 ))
             }
         }
@@ -339,8 +401,36 @@ class HealthInsightsEngine {
         summary += "\n\nTRENDS:"
         let trend = AnalyticsEngine.detectFrequencyTrend(sessions: sessions, period: period)
         summary += "\n• Frequency trend: \(trend.description)"
+
+        summary += "\n\nCLINICAL REFERENCES:"
+        for citation in doctorSummaryCitations() {
+            summary += "\n• \(citation.title): \(citation.url.absoluteString)"
+        }
         
         return summary
+    }
+
+    static func doctorSummaryCitations() -> [MedicalCitation] {
+        [
+            CitationLibrary.niddkUrinationBasics,
+            CitationLibrary.mayoFrequentUrination,
+            CitationLibrary.niddkBladderControl,
+            CitationLibrary.cdcHydration
+        ]
+    }
+
+    static func allMedicalCitations() -> [MedicalCitation] {
+        [
+            CitationLibrary.niddkUrinationBasics,
+            CitationLibrary.mayoFrequentUrination,
+            CitationLibrary.cdcHydration,
+            CitationLibrary.mayoHematuria,
+            CitationLibrary.mayoDysuria,
+            CitationLibrary.niddkBph,
+            CitationLibrary.niddkBladderControl,
+            CitationLibrary.mayoNocturia,
+            CitationLibrary.urologyHealthOveractiveBladder
+        ]
     }
 }
 
@@ -353,6 +443,29 @@ struct HealthInsight: Identifiable {
     let recommendation: String
     let priority: InsightPriority
     let category: InsightCategory
+    let citations: [MedicalCitation]
+
+    init(
+        title: String,
+        description: String,
+        recommendation: String,
+        priority: InsightPriority,
+        category: InsightCategory,
+        citations: [MedicalCitation] = []
+    ) {
+        self.title = title
+        self.description = description
+        self.recommendation = recommendation
+        self.priority = priority
+        self.category = category
+        self.citations = citations
+    }
+}
+
+struct MedicalCitation: Identifiable, Hashable {
+    let id = UUID()
+    let title: String
+    let url: URL
 }
 
 enum InsightPriority: Int {

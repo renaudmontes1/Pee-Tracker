@@ -175,6 +175,28 @@ struct InsightCard: View {
                     .padding(8)
                     .background(Color.blue.opacity(0.1))
                     .cornerRadius(6)
+
+                    if !insight.citations.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Image(systemName: "book.fill")
+                                    .font(.caption2)
+                                Text("Sources")
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundStyle(.secondary)
+
+                            ForEach(insight.citations) { citation in
+                                Link(destination: citation.url) {
+                                    Text(citation.title)
+                                        .font(.caption)
+                                        .underline()
+                                        .multilineTextAlignment(.leading)
+                                }
+                            }
+                        }
+                    }
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
